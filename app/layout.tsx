@@ -1,8 +1,6 @@
 import { Nunito } from "next/font/google";
 import { ThemeProvider } from "next-themes";
-import UpRoundLogo from "@/components/upround_logo";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import Link from "next/link";
+import Navbar from "@/components/navbar";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -34,27 +32,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="w-full flex items-center justify-between space-x-10 pt-2">
-            <div className="pl-10">
-              <Link href="/">
-                <UpRoundLogo width={50} height={50}/>
-              </Link>
-            </div>
-            <div className="flex space-x-28">
-              <Link href="/startups">
-                <p>Startups</p>
-              </Link>
-              <Link href="/memos">
-                <p>Memos</p>
-              </Link>
-              <Link href="/members">
-                <p>Members</p>
-              </Link>
-            </div>
-            <div className="pr-10 flex items-center">
-              <ThemeSwitcher />
-            </div>
-          </div>
+          <Navbar />
           <main>
             { children }
           </main>
