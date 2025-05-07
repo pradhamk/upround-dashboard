@@ -26,7 +26,7 @@ export default async function Navbar() {
               <Link href="/memos" className="hover:text-[#12AE8A] hover:underline">
                 <p>Memos</p>
               </Link>
-              <Link href="/calendar" className="hover:text-[#12AE8A] hover:underline">
+              <Link href="https://calendar.google.com/calendar/embed?src=c_6c061cb479b2083c2c2001fa4d889282e7a25aad50037f2c6ccac7b785a62772%40group.calendar.google.com&ctz=America%2FLos_Angeles" target="_blank" className="hover:text-[#12AE8A] hover:underline">
                 <p>Calendar</p>
               </Link>
               <Link href="/members" className="hover:text-[#12AE8A] hover:underline">
