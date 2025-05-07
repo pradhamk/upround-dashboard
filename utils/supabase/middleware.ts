@@ -37,5 +37,18 @@ export const updateSession = async (request: NextRequest) => {
     return NextResponse.redirect(new URL("/api/redirect_oauth", request.url));
   }
 
+  const { data } = await supabase
+                    .schema('whitelist')
+                    .from('profiles')
+                    .select("*")
+                    .eq('email', user.user.email)
+                    .limit(1)
+                    .single();
+
+  if(!data || data.id !== user.user.id) {
+    await supabase.auth.signOut();
+    return NextResponse.redirect('https://www.uproundvc.org/join');
+  }
+
   return response;
 };

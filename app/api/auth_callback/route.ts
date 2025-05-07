@@ -23,7 +23,7 @@ export async function GET(request: Request) {
                     .single();
 
     if(!data || data.id !== user.user?.id) {
-      return NextResponse.redirect(`${origin}/not_member`)
+      return NextResponse.redirect('https://www.uproundvc.org/join');
     }
 
     return NextResponse.redirect(`${origin}`)
