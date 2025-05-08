@@ -21,14 +21,18 @@ export interface UserSelectProps {
 }
 
 export type MemberProfile = {
-  name: string;
-  email: string;
+  name: string | null;
+  email: string | null;
   id: string;
-  linkedin: string;
+  linkedin: string | null;
   pfp: string | null;
   club_roles: string[];
-  major: string;
+  major: string | null;
   graduation_date: number;
   about: string | null;
   completed: boolean;
+  phone: string | null;
 };
+
+export const MAX_INPUT_SIZE = 40;
+export const MAX_ABOUT_SIZE = 400;
