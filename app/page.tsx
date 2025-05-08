@@ -1,5 +1,5 @@
-import InvalidMember from "@/components/ErrorDialog";
-import FirstLoginDialog from "@/components/FirstLoginDialog";
+import InvalidMember from "@/components/dialogs/ErrorDialog";
+import UserEditDialog from "@/components/dialogs/UserEditDialog";
 import { createClient } from "@/utils/supabase/server";
 import { MemberProfile } from "@/utils/utils";
 
@@ -28,7 +28,13 @@ export default async function Home() {
         <h1>Welcome back,&nbsp;</h1>
         <h1 className="text-[#12AE8A]"> {user?.user_metadata.name}</h1>
       </div>
-      <FirstLoginDialog user={user} initialState={initialState} member_data={data?.[0]} />
+      <UserEditDialog 
+        user={user} 
+        dialogOpen={initialState} 
+        member_data={data?.[0]} 
+        mode="firstlogin"
+        key={"First Login Dialog Prompt"}
+      />
       <InvalidMember open={errorState} />
     </>
   );

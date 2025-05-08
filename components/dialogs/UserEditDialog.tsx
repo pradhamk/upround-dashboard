@@ -1,8 +1,8 @@
 "use client";
 
 import { Dialog, DialogHeader, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
     Card,
     CardContent,
@@ -11,27 +11,26 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { User } from "@supabase/supabase-js";
-import UpRoundLogo from "./upround_logo";
 import Link from "next/link";
 import { Check, Linkedin, Mail, MoveRight, Pencil, Phone } from "lucide-react";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import { MemberProfile, MAX_ABOUT_SIZE, MAX_INPUT_SIZE } from "@/utils/utils";
-import { Textarea } from "./ui/textarea";
-import { Badge } from "./ui/badge";
+import { Textarea } from "../ui/textarea";
+import { Badge } from "../ui/badge";
 import { toast } from "sonner";
 
 interface DialogProps {
     user: User | null,
-    initialState: boolean,
-    member_data: MemberProfile | undefined
+    member_data: MemberProfile | undefined,
+    dialogOpen: boolean,
+    setDialogOpen?: Dispatch<SetStateAction<boolean>>,
+    mode: "edit" | "firstlogin"
 }
 
 const BASE_LINKEDIN_URL = "https://linkedin.com/in/";
 
-export default function FirstLoginDialog({ user, initialState, member_data }: DialogProps) {
-    const [dialogOpen, setDialogOpen] = useState(initialState);
-
+export default function UserEditDialog({ user, member_data, dialogOpen, setDialogOpen, mode }: DialogProps) {
     const [editingName, setEditingName] = useState(false);
     const [name, setName] = useState(user?.user_metadata?.full_name);
     
@@ -47,6 +46,18 @@ export default function FirstLoginDialog({ user, initialState, member_data }: Di
     const [editingSocials, setEditingSocials] = useState(false);
     const [linkedin, setLinkedin] = useState(member_data?.linkedin || BASE_LINKEDIN_URL);
     const [phone, setPhone] = useState(member_data?.phone || "PHONE #");
+
+    useEffect(() => {
+        if(!member_data || !user) {
+            return;
+        }
+        setName(user?.user_metadata?.full_name);
+        setMajor(member_data?.major || '[MAJOR]');
+        setYear(member_data?.graduation_date || 2028);
+        setAbout(member_data?.about || 'About Me...');
+        setLinkedin(member_data?.linkedin || BASE_LINKEDIN_URL);
+        setPhone(member_data?.phone || "PHONE #");
+    }, [member_data])
     
     const submitForm = async () => {
         const body: MemberProfile = {
@@ -75,7 +86,7 @@ export default function FirstLoginDialog({ user, initialState, member_data }: Di
         )
 
         if(res.status === 200) {
-            setDialogOpen(false);
+            setDialogOpen?.(false);
         } else {
             const err = await res.json();
             toast(err['error']);
@@ -90,12 +101,11 @@ export default function FirstLoginDialog({ user, initialState, member_data }: Di
     }
 
     return (
-        <Dialog open={dialogOpen}>
-            <DialogContent hideClose={true}>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogContent>
                 <DialogHeader>
                     <DialogTitle className="flex justify-between">
-                        Welcome to UpRound!
-                        <UpRoundLogo width={20} height={20}/>
+                        { mode === 'firstlogin' ? "Welcome to UpRound!" : "Edit your Profile." }
                     </DialogTitle>
                     <DialogDescription>Before proceeding, please complete or confirm the following details. This information will be displayed on the members page exactly as seen below.</DialogDescription>
                 </DialogHeader>
