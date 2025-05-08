@@ -10,7 +10,6 @@ export default async function Startups() {
         .eq("active", true);
 
     if (error) {
-        console.error("Error fetching startups:", error.message);
         return (
             <div className="relative pt-24 pl-16">
                 <p className="text-red-500">Failed to load startups. Please try again later.</p>
