@@ -2,13 +2,11 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel, DropdownMenuGroup } from "@/components/ui/dropdown-menu";
-import { User } from "@supabase/supabase-js";
+import { UserSelectProps } from "@/utils/utils";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-interface UserSelectProps {
-    user: User | null;
-  }  
+
 
 export default function UserSelect({ user }: UserSelectProps) {
     const router = useRouter();

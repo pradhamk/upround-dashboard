@@ -36,7 +36,7 @@ export const updateSession = async (request: NextRequest) => {
   if (error) {
     return NextResponse.redirect(new URL("/api/redirect_oauth", request.url));
   }
-
+  
   const { data } = await supabase
                     .schema('whitelist')
                     .from('profiles')

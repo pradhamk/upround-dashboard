@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { User } from "@supabase/supabase-js";
 
 /**
  * Redirects to a specified path with an encoded message as a query parameter.
@@ -14,3 +15,20 @@ export function encodedRedirect(
 ) {
   return redirect(`${path}?${type}=${encodeURIComponent(message)}`);
 }
+
+export interface UserSelectProps {
+  user: User | null;
+}
+
+export type MemberProfile = {
+  name: string;
+  email: string;
+  id: string;
+  linkedin: string;
+  pfp: string | null;
+  club_roles: string[];
+  major: string;
+  graduation_date: number;
+  about: string | null;
+  completed: boolean;
+};

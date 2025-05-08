@@ -2,8 +2,6 @@ import UpRoundLogo from "@/components/upround_logo";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel, DropdownMenuGroup } from "@/components/ui/dropdown-menu";
 import UserSelect from "./user-select";
 
 export default async function Navbar() {
