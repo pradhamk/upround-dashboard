@@ -28,7 +28,7 @@ export default function UserSelect({ user }: UserSelectProps) {
                             .limit(1)
                             .single();
         if(!data) {
-            toast('Error: Failed to get member data.')
+            toast('Error: Failed to get member data.');
             return;
         }
         setMemberData(data)

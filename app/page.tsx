@@ -1,4 +1,4 @@
-import InvalidMember from "@/components/dialogs/ErrorDialog";
+import ServerErrorDialog from "@/components/dialogs/ErrorDialog";
 import UserEditDialog from "@/components/dialogs/UserEditDialog";
 import { createClient } from "@/utils/supabase/server";
 import { MemberProfile } from "@/utils/utils";
@@ -35,7 +35,10 @@ export default async function Home() {
         mode="firstlogin"
         key={"First Login Dialog Prompt"}
       />
-      <InvalidMember open={errorState} />
+      <ServerErrorDialog 
+        open={errorState} 
+        description="It seems that you weren't added to our members database. Please contact one of our admins or board members to resolve this issue."
+      />
     </>
   );
 }

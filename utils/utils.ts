@@ -36,3 +36,4 @@ export type MemberProfile = {
 
 export const MAX_INPUT_SIZE = 40;
 export const MAX_ABOUT_SIZE = 400;
+export const BASE_LINKEDIN_URL = "https://linkedin.com/in/";
