@@ -51,9 +51,9 @@ export function EditableField({ value, editing, onChange, toggleEdit, inputType 
     );
 }
 
-export function ReadOnlyField({ children } : { children: React.ReactNode }) {
+export function ReadOnlyField({ children, isAbout } : { children: React.ReactNode, isAbout?: boolean }) {
     return (
-        <span className="flex-grow text-center">
+        <span className={`flex-grow text-center ${isAbout ? 'text-sm' : ''}`}>
             {children}
         </span>
     )

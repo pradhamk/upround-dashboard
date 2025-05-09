@@ -14,26 +14,38 @@ export default async function Startups() {
         error_open = true;
     }
 
-    const members = data?.filter((person) => person.completed);
+    const members = data?.filter((person) => person.completed) || [];
+    const roles = {
+        "board": members.filter((member) => member.club_roles.includes('board')),
+        "fund": members.filter((member) => member.club_roles.includes('fund')),
+        "accelerator": members.filter((member) => member.club_roles.includes('accelerator')),
+        "dealflow": members.filter((member) => member.club_roles.includes('dealflow')),
+    };
+
+    const Section = ({ title, members }: { title: string; members: MemberProfile[] }) => (
+        members.length > 0 && (
+            <div className="mt-16">
+                <h1 className="text-4xl font-bold">{title[0].toUpperCase() + title.slice(1)}</h1>
+                <div className="grid flex-wrap gap-y-4 grid-cols-4 gap-x-2 mt-4">
+                    {members.map((member) => (
+                        <MemberCard
+                            key={member.name}
+                            editable={false}
+                            member_data={member}
+                        />
+                    ))}
+                </div>
+            </div>
+        )
+    );
 
     return (
         <>
             <main className="w-full flex flex-col justify-center items-center">
-                <div className="w-5/6 mt-10">
-                    <h1 className="text-4xl font-bold">Members</h1>
-                </div>
-                <div className="flex space-x-3">
-                    {
-                        members?.map((member, i) => {
-                            return (
-                                <MemberCard 
-                                    key={member.name}
-                                    editable={false}
-                                    member_data={member}
-                                />
-                            )
-                        })
-                    }
+                <div className="w-11/12 flex flex-col pb-10">
+                    {Object.entries(roles).map(([title, members]) => (
+                        <Section key={title} title={title} members={members} />
+                    ))}
                 </div>
             </main>
 

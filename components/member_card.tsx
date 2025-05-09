@@ -39,6 +39,8 @@ export default function MemberCard({ member_data, editable, setMemberData } : Ca
     const [linkedin, setLinkedin] = useState(member_data?.linkedin || BASE_LINKEDIN_URL);
     const [phone, setPhone] = useState(member_data?.phone || "PHONE #");
 
+    const role_exclusions = ["board", "member"];
+
     useEffect(() => {
         if (editable) {
             setMemberData?.({
@@ -65,7 +67,7 @@ export default function MemberCard({ member_data, editable, setMemberData } : Ca
     }
 
     return (
-        <Card>
+        <Card className='w-full'>
             <CardHeader className="flex flex-col items-center pb-5">
                 <Avatar className="size-24">
                     <AvatarImage 
@@ -123,10 +125,12 @@ export default function MemberCard({ member_data, editable, setMemberData } : Ca
                         
                     </div>
                 </CardDescription>
-                <div className="flex space-x-3">
+
+                <div className="text-center space-x-2 flex-wrap space-y-2">
                     {
-                        member_data?.club_roles?.map((entry) => {
-                            return <Badge variant={"secondary"} key={entry}>{entry}</Badge>
+                        member_data?.club_roles?.map((entry, i) => {
+                            if(role_exclusions.includes(entry)) return;
+                            return <Badge variant={"secondary"} key={entry} className="justify-center w-fit">{entry[0].toUpperCase() + entry.slice(1)}</Badge>
                         })
                     }
                 </div>
@@ -144,11 +148,11 @@ export default function MemberCard({ member_data, editable, setMemberData } : Ca
                             maxLength={MAX_ABOUT_SIZE}
                             multiline
                         /> :
-                        <ReadOnlyField>{about}</ReadOnlyField>
+                        <ReadOnlyField isAbout>{about}</ReadOnlyField>
                     }
                 </div>
 
-                <div className="text-center relative flex items-center w-full">
+                <div className="text-center relative flex items-center justify-center w-full">
                     {
                         editable ? 
                         <>
@@ -202,7 +206,7 @@ export default function MemberCard({ member_data, editable, setMemberData } : Ca
 
 export function MemberSocials({ email, linkedin, phone } : { email: string, linkedin: string, phone: string }) {
     return (
-        <div className="flex justify-center space-x-20">
+        <div className="flex justify-center space-x-16">
             <Link href={`mailto:${email}`} className="hover:text-secondary" target="_blank">
                 <Mail />
             </Link>
