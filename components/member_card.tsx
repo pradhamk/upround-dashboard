@@ -10,11 +10,11 @@ import {
 } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Check, Linkedin, Mail, Pencil, Phone } from "lucide-react";
 import Link from "next/link";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { EditableField, ReadOnlyField } from "./user_fields";
 
 interface CardProps {
     member_data: MemberProfile | undefined,
@@ -77,26 +77,15 @@ export default function MemberCard({ member_data, editable, setMemberData } : Ca
                 <CardTitle className="relative flex items-center justify-between w-full">
                     {
                         editable ? 
-                        <>
-                            <div className="flex-grow text-center">
-                                {
-                                    editingName ? <Input 
-                                                        type="text"
-                                                        value={name as string}
-                                                        onChange={(e) => setName(e.target.value)}
-                                                        className="text-center inline-block w-fit"
-                                                        maxLength={MAX_INPUT_SIZE}
-                                                    /> :
-                                    <span>{name}</span>
-                                }
-                            </div>
-                            <div className="cursor-pointer absolute right-0" onClick={() => setEditingName(!editingName)}>
-                                {
-                                    editingName ? <Check size={15}/> : <Pencil width={15}/>
-                                }
-                            </div>
-                        </> :
-                        <span>{name}</span>
+                        <EditableField 
+                            key="Name"
+                            editing={editingName}
+                            value={name as string}
+                            onChange={setName}
+                            toggleEdit={setEditingName}
+                            maxLength={MAX_INPUT_SIZE}
+                        /> :
+                        <ReadOnlyField>{name}</ReadOnlyField>
                     }
                     
                 </CardTitle>
@@ -104,55 +93,32 @@ export default function MemberCard({ member_data, editable, setMemberData } : Ca
                     <div className="text-center relative flex items-center">
                         {
                             editable ? 
-                            <>
-                                <div className="flex-grow text-center">
-                                    {
-                                        editingMajor ? <Input 
-                                                            type="text"
-                                                            value={major}
-                                                            onChange={(e) => setMajor(e.target.value)}
-                                                            className="text-center inline-block w-fit"
-                                                            maxLength={MAX_INPUT_SIZE}
-                                                        /> :
-                                        <span>{major}</span>
-                                    }
-                                </div>
-                                <div className="cursor-pointer absolute right-0" onClick={() => setEditingMajor(!editingMajor)}>
-                                    {
-                                        editingMajor ? <Check size={15}/> : <Pencil width={15}/>
-                                    }
-                                </div>   
-                            </> :
-                            <span>{major}</span>
+                            <EditableField 
+                                key="Major"
+                                editing={editingMajor}
+                                value={major as string}
+                                onChange={setMajor}
+                                toggleEdit={setEditingMajor}
+                                maxLength={MAX_INPUT_SIZE}
+                            /> :
+                            <ReadOnlyField>{major}</ReadOnlyField>
                         }
                     </div>
                     
                     <div className="text-center relative flex items-center">
                         {
                             editable ? 
-                            <>
-                                <div className="flex-grow text-center">
-                                    {
-                                        editingYear ? 
-                                        <>
-                                            <span className="pr-2">Class of</span>
-                                            <Input 
-                                                type="number"
-                                                value={year}
-                                                onChange={(e) => setYear(e.target.value.length > 0 ? parseInt(e.target.value) : 2028)}
-                                                className="text-center inline-block w-fit"
-                                            /> 
-                                        </> :
-                                        <span>Class of {year}</span>
-                                    }
-                                </div>
-                                <div className="cursor-pointer absolute right-0" onClick={() => setEditingYear(!editingYear)}>
-                                    {
-                                        editingYear ? <Check size={15}/> : <Pencil width={15}/>
-                                    }
-                                </div>
-                            </> :
-                            <span>Class of {year}</span>
+                            <EditableField 
+                                key="Year"
+                                editing={editingYear}
+                                value={year}
+                                onChange={(val) => setYear(val.length > 0 ? parseInt(val) : 2028)}
+                                toggleEdit={setEditingYear}
+                                maxLength={MAX_INPUT_SIZE}
+                                prefix={"Class of "}
+                                inputType="number"
+                            /> :
+                            <ReadOnlyField>Class of {year}</ReadOnlyField>
                         }
                         
                     </div>
@@ -169,28 +135,16 @@ export default function MemberCard({ member_data, editable, setMemberData } : Ca
                 <div className="text-center relative flex items-center w-full">
                     {
                         editable ? 
-                        <>
-                            <div className="flex-grow text-center">
-                                {
-                                    editingAbout ? 
-                                    <>
-                                        <Textarea 
-                                            value={about}
-                                            onChange={(e) => setAbout(e.target.value)}
-                                            className="text-center inline-block w-3/4"
-                                            maxLength={MAX_ABOUT_SIZE}
-                                        /> 
-                                    </> :
-                                    <span>{about}</span>
-                                }
-                            </div>
-                            <div className="cursor-pointer absolute right-0" onClick={() => setEditingAbout(!editingAbout)}>
-                                {
-                                    editingAbout ? <Check size={15}/> : <Pencil width={15}/>
-                                }
-                            </div>   
-                        </> :
-                        <span>{about}</span>
+                        <EditableField 
+                            key="About"
+                            editing={editingAbout}
+                            value={about as string}
+                            onChange={setAbout}
+                            toggleEdit={setEditingAbout}
+                            maxLength={MAX_ABOUT_SIZE}
+                            multiline
+                        /> :
+                        <ReadOnlyField>{about}</ReadOnlyField>
                     }
                 </div>
 

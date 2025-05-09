@@ -1,4 +1,5 @@
 import ServerErrorDialog from "@/components/dialogs/ErrorDialog";
+import MemberCard from "@/components/member_card";
 import { createClient } from "@/utils/supabase/server";
 import { MemberProfile } from "@/utils/utils";
 
@@ -15,11 +16,25 @@ export default async function Startups() {
 
     const members = data?.filter((person) => person.completed);
 
-
     return (
         <>
-            <main>
-                <h1>test</h1>
+            <main className="w-full flex flex-col justify-center items-center">
+                <div className="w-5/6 mt-10">
+                    <h1 className="text-4xl font-bold">Members</h1>
+                </div>
+                <div className="flex space-x-3">
+                    {
+                        members?.map((member, i) => {
+                            return (
+                                <MemberCard 
+                                    key={member.name}
+                                    editable={false}
+                                    member_data={member}
+                                />
+                            )
+                        })
+                    }
+                </div>
             </main>
 
             <ServerErrorDialog 
