@@ -17,12 +17,18 @@ export default async function Members() {
     }
 
     const members = data?.filter((person) => person.completed) || [];
-    const roles = {
-        "board": members.filter((member) => member.club_roles.includes('board')),
-        "fund": members.filter((member) => member.club_roles.includes('fund')),
-        "accelerator": members.filter((member) => member.club_roles.includes('accelerator')),
-        "dealflow": members.filter((member) => member.club_roles.includes('dealflow')),
+    let board = {
+        "board" : members.filter((member) => member.club_roles.includes('board')),
     };
+    let club = {
+        "fund": members.filter((member) => member.club_roles.includes('fund') && !board.board.includes(member)),
+        "accelerator": members.filter((member) => member.club_roles.includes('accelerator') && !board.board.includes(member)),
+        "dealflow": members.filter((member) => member.club_roles.includes('dealflow') && !board.board.includes(member)),
+    }
+    const roles = {
+        ...board,
+        ...club
+    }
 
     const Section = ({ title, members }: { title: string; members: MemberProfile[] }) => (
         members.length > 0 && (
