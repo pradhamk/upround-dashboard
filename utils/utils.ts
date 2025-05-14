@@ -20,6 +20,7 @@ export interface UserSelectProps {
   user: User | null;
 }
 
+// Could use supabase type generation here but this is more preferable
 export type MemberProfile = {
   name: string | null;
   email: string | null;
@@ -34,6 +35,27 @@ export type MemberProfile = {
   phone: string | null;
 };
 
+export type StartupProfile = {
+  id: number,
+  name: string,
+  industry: string,
+  sourcer: string,
+  status: string,
+  source: string,
+  mvc_level: string,
+  notes: string,
+  date_sourced: string,
+  website: string,
+  description: string,
+  tagline: string,
+  contact: string,
+};
+
+export function generatePreview(url: string): string {
+  return SEARCH_ICON_LINK + encodeURI(url);
+}
+
 export const MAX_INPUT_SIZE = 40;
 export const MAX_ABOUT_SIZE = 400;
 export const BASE_LINKEDIN_URL = "https://linkedin.com/in/";
+export const SEARCH_ICON_LINK = "https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=";

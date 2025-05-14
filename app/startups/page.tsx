@@ -1,32 +1,36 @@
+import StartupCard from "@/components/StartupCard";
 import { createClient } from "@/utils/supabase/server";
+import { StartupProfile } from "@/utils/utils";
+import ServerErrorDialog from "@/components/dialogs/ErrorDialog";
 
 export default async function Startups() {
+    let error_open = false;
     const client = await createClient();
 
-    // Fetch startups where active is true
-    const { data: startups, error } = await client
-        .from("startups")
-        .select("*")
-        .eq("active", true);
+    const { data, error }: { data: StartupProfile[] | null, error: any } = await client
+        .schema('dealflow')
+        .from('startups')
+        .select('*')
 
     if (error) {
-        return (
-            <div className="relative pt-24 pl-16">
-                <p className="text-red-500">Failed to load startups. Please try again later.</p>
-            </div>
-        );
+        error_open = true;
     }
 
     return (
-        <div className="relative pt-24 pl-16">
-            <h1 className="text-5xl font-semibold mb-8">Current Startups:</h1>
-            <ul className="space-y-4">
-                {startups?.map((startup) => (
-                    <li key={startup.id} className="text-xl">
-                        {startup.name}
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <>
+            <main className="w-full flex items-center justify-center">
+                <div className="w-1/3 flex flex-col gap-y-2">
+                    {
+                        data?.map((startup, i) => {
+                            return <StartupCard key={i} startup={startup}/>
+                        })
+                    }
+                </div>
+            </main>
+            <ServerErrorDialog
+                open={error_open}
+                description="The server failed to load the startups. This could be due to your authentication or a server-side error. Please try refreshing the page. If the issue persists, contact an admin."
+            />
+        </>
     );
 }
