@@ -2,15 +2,13 @@ import ServerErrorDialog from "@/components/dialogs/ErrorDialog";
 import MemberCard from "@/components/member_card";
 import { MemberSearchInput } from "@/components/search_bar";
 import { createClient } from "@/utils/supabase/server";
+import { getAllMembers } from "@/utils/supabase/utils";
 import { MemberProfile } from "@/utils/utils";
 
 export default async function Members() {
     let error_open = false;
     const client = await createClient();
-    const { data }: { data: MemberProfile[] | null } = await client
-        .schema('members')
-        .from('profiles')
-        .select('*');
+    const { data , error } = await getAllMembers();
 
     if(!data) {
         error_open = true;

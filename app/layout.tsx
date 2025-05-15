@@ -3,6 +3,7 @@ import { ThemeProvider } from "next-themes";
 import Navbar from "@/components/navbar";
 import { Toaster } from "@/components/ui/sonner"
 import "./globals.css";
+import UpRoundLogo from "@/components/upround_logo";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -37,6 +38,14 @@ export default function RootLayout({
           <main>
             { children }
           </main>
+          <div className="py-6 flex justify-between items-center px-10">
+            <div className="flex items-center">
+              <UpRoundLogo width={20} height={20} colorWithTheme/>
+            </div>
+            <h2 className="text-right text-sm opacity-75">
+              &copy; {new Date().getFullYear()} — Copyright UpRound Ventures
+            </h2>
+          </div>
           <Toaster />
         </ThemeProvider>
       </body>

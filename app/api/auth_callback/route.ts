@@ -37,7 +37,10 @@ async function uploadProfilePicture(supabase: SupabaseClient, buffer: ArrayBuffe
   const dest = `members/${filename}.png`;
   const uploadRes = await supabase.storage
     .from('pfps')
-    .upload(dest, buffer, { contentType });
+    .upload(dest, buffer, { 
+      contentType, 
+      upsert: true,
+    });
 
   if (uploadRes.error) {
     throw new Error('Failed to upload profile picture');
@@ -77,7 +80,7 @@ export async function GET(request: Request) {
     }
 
     const buffer = await fetchProfilePicture(user.user.user_metadata.picture);
-    const pfpRes = await uploadProfilePicture(supabase, buffer, user.user.user_metadata.name.replaceAll(" ", "_"), 'image/png');
+    const pfpRes = await uploadProfilePicture(supabase, buffer, user.user.id, 'image/png');
     
     await updateUserProfile(supabase, user.user.email as string, pfpRes.data.publicUrl);
 

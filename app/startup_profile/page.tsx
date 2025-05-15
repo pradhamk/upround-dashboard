@@ -1,15 +1,11 @@
-import { MemberShortDisplay } from "@/components/MemberShortDisplay";
+import MemberInsight from "@/components/member_insight";
 import { StartupGeniusCard } from "@/components/StartupCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
-import { generatePreview, StartupProfile } from "@/utils/utils";
-import {  } from "lucide-react";
-import Link from "next/link";
+import { EnrichedAnalystInsight, generatePreview, StartupProfile } from "@/utils/utils";
 import { redirect } from "next/navigation";
-import { ReactNode } from "react";
 
-export default async function StartupProfilePage({ searchParams }: { searchParams?: { [key: string]: string | undefined } }) {
+export default async function StartupProfilePage({ searchParams }: { searchParams?: Promise<{ id: string }> }) {
     const id = (await searchParams)?.id;
     if(!id || typeof id !== 'string') {
         redirect('/startups');
@@ -27,6 +23,12 @@ export default async function StartupProfilePage({ searchParams }: { searchParam
     if(error || !data) {
         redirect('/startups');
     }
+
+    const { data: insights }: { data: EnrichedAnalystInsight[] | null } = await client
+                    .schema('dealflow')
+                    .from('enriched_insights')
+                    .select('*')
+                    .eq('company', data.id);
 
     return (
         <main className="w-full flex justify-center mt-12">
@@ -48,7 +50,18 @@ export default async function StartupProfilePage({ searchParams }: { searchParam
                     {data.description}
                 </p>
                 <div className="mt-10">
-                    <h1 className="font-bold text-xl">Analyst Insights:</h1>
+                    <h1 className="font-bold text-xl mb-5">Analyst Insights:</h1>
+                    {
+                        !insights || insights.length === 0 ?
+                        <h1 className="opacity-75">There are no comments for this company.</h1> : 
+                        <div className="space-y-3 mb-10">
+                            {
+                                insights.map((insight, i) => {
+                                    return <MemberInsight insight={insight} key={i} />
+                                })
+                            }
+                        </div>
+                    }
                 </div>
             </div>
             <div className="w-1/5">

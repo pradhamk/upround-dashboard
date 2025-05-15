@@ -90,18 +90,18 @@ export function StartupGeniusCard({ startup }: { startup: StartupProfile }) {
           <InfoRow icon={<Handshake size={14} />} label="Dealflow Status:">
               {startup.status}
           </InfoRow>
-          <InfoRow icon={<UpRoundLogo width={14} />} label="MVC Level:">
+          <InfoRow icon={<UpRoundLogo width={14} height={14} colorWithTheme/>} label="MVC Level:">
               <div className="flex items-center space-x-1">
-              <div
-                  className={`w-3 h-3 rounded-full ${
-                  startup.mvc_level === "Yes"
-                      ? "bg-green-500"
-                      : startup.mvc_level === "No"
-                      ? "bg-red-500"
-                      : "bg-orange-400"
-                  }`}
-              />
-              <span>{startup.mvc_level}</span>
+                <div
+                    className={`w-3 h-3 rounded-full ${
+                    startup.mvc_level === "Yes"
+                        ? "bg-green-500"
+                        : startup.mvc_level === "No"
+                        ? "bg-red-500"
+                        : "bg-orange-400"
+                    }`}
+                />
+                <span>{startup.mvc_level}</span>
               </div>
           </InfoRow>
           <div className="border-t border-gray-200 my-2" />

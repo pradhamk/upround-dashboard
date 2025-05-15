@@ -5,7 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuIte
 import { MemberProfile, UserSelectProps } from "@/utils/utils";
 import { LogOut, UserPen } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserEditDialog from "./dialogs/UserEditDialog";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
@@ -14,26 +14,43 @@ export default function UserSelect({ user }: UserSelectProps) {
     const router = useRouter();
     const client = createClient();
     const [profileEditOpen, setProfileEditOpen] = useState(false);
-    const [memberData, setMemberData] = useState<MemberProfile | undefined>()
+    const [memberData, setMemberData] = useState<MemberProfile | undefined>();
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            if (!user?.email || memberData) return;
+
+            const { data, error } = await client
+                .schema('members')
+                .from('profiles')
+                .select('*')
+                .eq('email', user.email)
+                .limit(1)
+                .single();
+
+            if (error) {
+                console.error("Failed to fetch profile", error);
+                toast.error("Failed to load profile.");
+                return;
+            }
+
+            setMemberData(data);
+        };
+
+        fetchProfile();
+    }, [user?.email]);
 
     const handleLogout = () => {
         router.push('/api/logout');
-    }
+    };
 
-    const handleEditProfile = async () => {
-        const { data }: { data: MemberProfile | null } = await client.schema('members')
-                            .from('profiles')
-                            .select('*')
-                            .eq('email', user?.email)
-                            .limit(1)
-                            .single();
-        if(!data) {
-            toast('Error: Failed to get member data.');
+    const handleEditProfile = () => {
+        if (!memberData) {
+            toast.error("Profile not loaded yet.");
             return;
         }
-        setMemberData(data)
         setProfileEditOpen(true);
-    }
+    };
 
     return (
         <>
@@ -41,7 +58,7 @@ export default function UserSelect({ user }: UserSelectProps) {
                 <DropdownMenuTrigger asChild>
                     <Avatar className="size-8 cursor-pointer">
                     <AvatarImage
-                        src={user?.user_metadata.avatar_url}
+                        src={memberData?.pfp as string}
                         title={user?.user_metadata.name}
                     />
                     <AvatarFallback>{user?.email}</AvatarFallback>

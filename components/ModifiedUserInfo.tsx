@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogHeader, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
@@ -11,7 +11,6 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { User } from "@supabase/supabase-js";
-import UpRoundLogo from "./upround_logo";
 import Link from "next/link";
 import { Check, Linkedin, Mail, MoveRight, Pencil, Phone } from "lucide-react";
 import { Button } from "./ui/button";

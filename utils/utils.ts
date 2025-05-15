@@ -36,7 +36,7 @@ export type MemberProfile = {
 };
 
 export type StartupProfile = {
-  id: number,
+  id: string,
   name: string,
   industry: string,
   sourcer: string,
@@ -49,6 +49,16 @@ export type StartupProfile = {
   description: string,
   tagline: string,
   contact: string,
+};
+
+export type EnrichedAnalystInsight = {
+  id: string,
+  company: string,
+  member: string,
+  created_at: string,
+  notes: string,
+  user_pfp: string,
+  user_name: string,
 };
 
 export function generatePreview(url: string): string {
