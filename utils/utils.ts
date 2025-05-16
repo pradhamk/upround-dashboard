@@ -59,6 +59,7 @@ export type EnrichedAnalystInsight = {
   notes: string,
   user_pfp: string,
   user_name: string,
+  user_email: string,
 };
 
 export function generatePreview(url: string): string {

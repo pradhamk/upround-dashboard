@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={geistSans.className} suppressHydrationWarning>
-      <body className="">
+      <body className="min-h-screen flex flex-col">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -35,7 +35,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Navbar />
-          <main>
+          <main className="flex-1">
             { children }
           </main>
           <div className="py-6 flex justify-between items-center px-10">

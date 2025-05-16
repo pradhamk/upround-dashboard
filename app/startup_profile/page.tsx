@@ -1,4 +1,4 @@
-import MemberInsight from "@/components/member_insight";
+import MemberInsightsDisplay from "@/components/member_insight";
 import { StartupGeniusCard } from "@/components/StartupCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createClient } from "@/utils/supabase/server";
@@ -24,6 +24,7 @@ export default async function StartupProfilePage({ searchParams }: { searchParam
         redirect('/startups');
     }
 
+    const user = (await client.auth.getUser()).data.user;
     const { data: insights }: { data: EnrichedAnalystInsight[] | null } = await client
                     .schema('dealflow')
                     .from('enriched_insights')
@@ -49,20 +50,7 @@ export default async function StartupProfilePage({ searchParams }: { searchParam
                 <p className="mt-8 whitespace-pre-wrap leading-relaxed mr-10">
                     {data.description}
                 </p>
-                <div className="mt-10">
-                    <h1 className="font-bold text-xl mb-5">Analyst Insights:</h1>
-                    {
-                        !insights || insights.length === 0 ?
-                        <h1 className="opacity-75">There are no comments for this company.</h1> : 
-                        <div className="space-y-3 mb-10">
-                            {
-                                insights.map((insight, i) => {
-                                    return <MemberInsight insight={insight} key={i} />
-                                })
-                            }
-                        </div>
-                    }
-                </div>
+                <MemberInsightsDisplay insights={insights} user={user}/>
             </div>
             <div className="w-1/5">
                 <StartupGeniusCard startup={data} />
