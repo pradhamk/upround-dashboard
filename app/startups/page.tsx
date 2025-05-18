@@ -1,6 +1,6 @@
 import StartupCard from "@/components/StartupCard";
 import { createClient } from "@/utils/supabase/server";
-import { StartupProfile } from "@/utils/utils";
+import { MemberProfile, StartupProfile } from "@/utils/utils";
 import ServerErrorDialog from "@/components/dialogs/ErrorDialog";
 
 export default async function Startups() {
@@ -16,13 +16,26 @@ export default async function Startups() {
         error_open = true;
     }
 
+    const sourcerIds = data?.map((s) => s.sourcer);
+    const { data: memberProfiles }: { data: MemberProfile[] | null } = await client
+                                        .schema('members')
+                                        .from('profiles')
+                                        .select("*")
+                                        .in("id", sourcerIds || []);
+
+    const memberMap = new Map(memberProfiles?.map((m) => [m.id, m]));
+
     return (
         <>
             <main className="w-full flex items-center justify-center">
                 <div className="w-1/3 flex flex-col gap-y-2">
                     {
                         data?.map((startup, i) => {
-                            return <StartupCard key={i} startup={startup}/>
+                            return <StartupCard 
+                                        key={i} 
+                                        startup={startup}
+                                        member={memberMap.get(startup.sourcer)}
+                                    />
                         })
                     }
                 </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { generatePreview, StartupProfile } from "@/utils/utils";
+import { generatePreview, MemberProfile, StartupProfile } from "@/utils/utils";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { ReactNode } from "react";
@@ -11,7 +11,7 @@ import UpRoundLogo from "@/components/upround_logo";
 import { Button } from "./ui/button";
 
 
-export default function StartupCard({ startup }: { startup: StartupProfile }) {
+export default function StartupCard({ startup, member }: { startup: StartupProfile, member: MemberProfile | undefined }) {
   return (
     <Link href={`/startup_profile?id=${startup.id}`}>
       <Card className="w-full rounded-2xl flex relative cursor-pointer shadow">
@@ -28,7 +28,7 @@ export default function StartupCard({ startup }: { startup: StartupProfile }) {
                 <h1 className="text-lg font-semibold">{startup.name}</h1>
                 <span className="text-xs text-gray-600">{startup.industry}</span>
               </div>
-              <MemberShortDisplay uid={startup.sourcer} sm />
+              <MemberShortDisplay member={member} sm />
             </div>
             <p className="text-sm opacity-85 truncate w-11/12">{startup.tagline}</p>
           </div>
@@ -63,7 +63,7 @@ const SocialButton = ({ url, children }: { url: string, children: ReactNode }) =
     </Button>
 )
 
-export function StartupGeniusCard({ startup }: { startup: StartupProfile }) {
+export function StartupGeniusCard({ startup, member }: { startup: StartupProfile, member: MemberProfile | null }) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -82,7 +82,7 @@ export function StartupGeniusCard({ startup }: { startup: StartupProfile }) {
               })}
           </InfoRow>
           <InfoRow icon={<UserSearch size={14} />} label="Sourced By:">
-              <MemberShortDisplay uid={startup.sourcer} />
+              <MemberShortDisplay member={member} />
           </InfoRow>
           <InfoRow icon={<SearchCheck size={14} />} label="Sourced From:">
               { startup.source }

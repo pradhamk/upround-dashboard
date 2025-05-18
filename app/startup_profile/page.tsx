@@ -2,7 +2,7 @@ import MemberInsightsDisplay from "@/components/member_insight";
 import { StartupGeniusCard } from "@/components/StartupCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createClient } from "@/utils/supabase/server";
-import { EnrichedAnalystInsight, generatePreview, StartupProfile } from "@/utils/utils";
+import { EnrichedAnalystInsight, generatePreview, MemberProfile, StartupProfile } from "@/utils/utils";
 import { redirect } from "next/navigation";
 
 export default async function StartupProfilePage({ searchParams }: { searchParams?: Promise<{ id: string }> }) {
@@ -23,6 +23,14 @@ export default async function StartupProfilePage({ searchParams }: { searchParam
     if(error || !data) {
         redirect('/startups');
     }
+
+    const { data: sourcer }: { data: MemberProfile | null } = await client
+                        .schema('members')
+                        .from('profiles')
+                        .select('*')
+                        .eq('id', data.sourcer)
+                        .limit(1)
+                        .single();
 
     const user = (await client.auth.getUser()).data.user;
     const { data: insights }: { data: EnrichedAnalystInsight[] | null } = await client
@@ -53,7 +61,7 @@ export default async function StartupProfilePage({ searchParams }: { searchParam
                 <MemberInsightsDisplay insights={insights} user={user}/>
             </div>
             <div className="w-1/5">
-                <StartupGeniusCard startup={data} />
+                <StartupGeniusCard startup={data} member={sourcer}/>
             </div>
         </main>
     ) 
