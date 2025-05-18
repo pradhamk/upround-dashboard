@@ -57,7 +57,7 @@ export function SearchResults({ filteredMembers, isSearching } : { members: Memb
         {filteredMembers.length > 0 ? 
             <>
                 <h2 className="text-xl font-bold mb-4">Search Results ({filteredMembers.length})</h2>
-                <div className="grid flex-wrap gap-y-4 grid-cols-4 gap-x-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-4 mt-4">
                     {filteredMembers.map((member) => (
                         <MemberCard
                             key={member.name}
@@ -105,7 +105,7 @@ export function MemberSearchInput({ members }: { members: MemberProfile[] }) {
     return (
         <>
             <div className="flex w-full justify-center mt-10 mb-2">
-                <div className="relative w-1/3">
+                <div className="relative md:w-1/3 w-2/3">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={15} />
                     <Input
                         className="pl-10"

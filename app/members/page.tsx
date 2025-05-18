@@ -30,9 +30,9 @@ export default async function Members() {
 
     const Section = ({ title, members }: { title: string; members: MemberProfile[] }) => (
         members.length > 0 && (
-            <div className="mb-16">
+            <div className="mb-16 flex flex-col items-center md:items-start">
                 <h1 className="text-4xl font-bold">{title[0].toUpperCase() + title.slice(1)}</h1>
-                <div className="grid flex-wrap gap-y-4 grid-cols-4 gap-x-2 mt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-4 mt-4">
                     {members.map((member) => (
                         <MemberCard
                             key={member.name}
@@ -52,7 +52,7 @@ export default async function Members() {
             
             <div className="w-11/12 flex flex-col pb-10">
                 {Object.entries(roles).map(([title, members]) => (
-                <Section key={title} title={title} members={members} />
+                    <Section key={title} title={title} members={members} />
                 ))}
             </div>
         </main>
