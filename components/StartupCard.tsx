@@ -46,8 +46,8 @@ type InfoRowProps = {
 };
 
 const InfoRow = ({ icon, label, children }: InfoRowProps) => (
-  <div className="flex justify-between">
-    <div className="flex items-center space-x-1 justify-center">
+  <div className="flex flex-col 2xl:flex-row justify-between">
+    <div className="flex items-center space-x-1 2xl:justify-center">
       {icon}
       <h2 className="font-bold">{label}</h2>
     </div>

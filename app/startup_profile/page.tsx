@@ -35,11 +35,11 @@ export default async function StartupProfilePage({ searchParams }: { searchParam
     const user = (await client.auth.getUser()).data.user;
 
     return (
-        <main className="w-full flex justify-center mt-12">
-            <div className="w-1/2 h-fit flex-grow-0">
+        <main className="w-full flex flex-col-reverse lg:flex-row lg:items-start justify-center mt-12 gap-8 px-4">
+            <div className="w-full lg:w-1/2 h-fit flex-grow-0">
                 <div className="flex">
                     <Avatar className="rounded-lg size-32">
-                        <AvatarImage src={generatePreview(data.website)}/>
+                        <AvatarImage src={generatePreview(data.website)} />
                         <AvatarFallback>{data.name} Logo</AvatarFallback>
                     </Avatar>
                     <div className="pl-10 flex flex-col space-y-4 w-3/4">
@@ -50,18 +50,16 @@ export default async function StartupProfilePage({ searchParams }: { searchParam
                         <h3 className="text-xl">{data.tagline}</h3>
                     </div>
                 </div>
-                <p className="mt-8 whitespace-pre-wrap leading-relaxed mr-10">
+                <p className="mt-8 whitespace-pre-wrap leading-relaxed lg:mr-10">
                     {data.description}
                 </p>
-                <div className="pr-10">
-                    <MemberInsightsDisplay  
-                        user={user}
-                        company_id={data.id}
-                    />
+                <div className="lg:pr-10">
+                    <MemberInsightsDisplay user={user} company_id={data.id} />
                 </div>
             </div>
-            <div className="w-1/5">
-                <StartupGeniusCard startup={data} member={sourcer}/>
+
+            <div className="w-full lg:w-1/5">
+                <StartupGeniusCard startup={data} member={sourcer} />
             </div>
         </main>
     ) 
