@@ -62,6 +62,13 @@ export type EnrichedAnalystInsight = {
   user_email: string,
 };
 
+export type InsightActionBody = {
+  method: 'create' | 'edit' | 'delete',
+  notes: string,
+  company_id: string,
+  insight_id?: string,
+};
+
 export function generatePreview(url: string): string {
   return SEARCH_ICON_LINK + encodeURI(url);
 }

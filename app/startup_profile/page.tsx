@@ -33,11 +33,6 @@ export default async function StartupProfilePage({ searchParams }: { searchParam
                         .single();
 
     const user = (await client.auth.getUser()).data.user;
-    const { data: insights }: { data: EnrichedAnalystInsight[] | null } = await client
-                    .schema('dealflow')
-                    .from('enriched_insights')
-                    .select('*')
-                    .eq('company', data.id);
 
     return (
         <main className="w-full flex justify-center mt-12">
@@ -58,7 +53,12 @@ export default async function StartupProfilePage({ searchParams }: { searchParam
                 <p className="mt-8 whitespace-pre-wrap leading-relaxed mr-10">
                     {data.description}
                 </p>
-                <MemberInsightsDisplay insights={insights} user={user}/>
+                <div className="pr-10">
+                    <MemberInsightsDisplay  
+                        user={user}
+                        company_id={data.id}
+                    />
+                </div>
             </div>
             <div className="w-1/5">
                 <StartupGeniusCard startup={data} member={sourcer}/>

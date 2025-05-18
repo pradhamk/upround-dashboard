@@ -3,52 +3,137 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
-import { Send } from "lucide-react";
+import { Send, Trash2 } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { InsightActionBody } from "@/utils/utils";
+import { toast } from "sonner";
 
 type EditProps = {
-    editOpen: boolean,
-    setEditOpen: Dispatch<SetStateAction<boolean>>,
-    insight_id?: string,
-    insight_notes?: string,
-    mode: 'create' | 'edit'
-}
+    dialogOpen: boolean;
+    setDialogOpen: Dispatch<SetStateAction<boolean>>;
+    insight_id?: string;
+    insight_notes?: string;
+    company_id: string;
+    mode: "create" | "edit" | 'delete';
+    refresh_insights: () => void;
+};
 
-export default function MemberInsightAction({ editOpen, setEditOpen, insight_id, insight_notes, mode }: EditProps) {
+export function MemberInsightAction({
+    dialogOpen,
+    setDialogOpen,
+    insight_id,
+    insight_notes,
+    mode,
+    company_id,
+    refresh_insights,
+}: EditProps) {
     const [editInput, setEditInput] = useState(insight_notes || "");
-    const isCreateMode = mode === 'create';
+    const isCreateMode = mode === "create";
 
-    const submitAction = () => {
+    const submitAction = async () => {
+        const body: InsightActionBody = {
+            method: isCreateMode ? 'create' : 'edit',
+            company_id: company_id,
+            notes: editInput,
+            ...(!isCreateMode && { insight_id: insight_id })
+        }
+        
+        const res = await fetch('/api/insight_action', {
+            method: 'POST',
+            body: JSON.stringify(body)
+        })
 
-    }
+        if(res.status === 200) {
+            refresh_insights();
+            setDialogOpen(false);
+        } else {
+            const err = await res.json();
+            toast(err['error'])
+        }
+    };
 
     useEffect(() => {
-        if(!editOpen) { return; }
-        setEditInput(insight_notes || "");
-    }, [editOpen, insight_notes])
+        if (dialogOpen) {
+            setEditInput(insight_notes || "");
+        }
+    }, [dialogOpen, insight_notes]);
 
     return (
-        <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
-                        Edit your Insight.
+                        {isCreateMode ? "Add a New Insight" : "Edit Your Insight"}
                     </DialogTitle>
                     <DialogDescription>
-                            You can update the content of your insight here. Once saved, your changes will be visible to other team members who have access to this company profile.
+                        {isCreateMode
+                            ? "Provide your analysis or comment for this company."
+                            : "Update your insight. Changes will be visible to team members."}
                     </DialogDescription>
                 </DialogHeader>
-                <Textarea 
+                <Textarea
                     value={editInput}
                     onChange={(e) => setEditInput(e.target.value)}
+                    placeholder={
+                        isCreateMode
+                            ? "Write your insight here..."
+                            : "Edit your insight..."
+                    }
+                    rows={5}
                 />
                 <div className="w-full flex justify-end">
-                    <Button onClick={submitAction}>
-                        Submit
-                        <Send />
+                    <Button onClick={submitAction} disabled={!editInput.trim()}>
+                        {isCreateMode ? "Submit Insight" : "Update Insight"}
+                        <Send className="ml-2 h-4 w-4" />
                     </Button>
                 </div>
             </DialogContent>
         </Dialog>
-    )
+    );
+}
+
+export function MemberInsightDelete({ dialogOpen, insight_id, company_id, refresh_insights, setDialogOpen }: EditProps) {
+    const deleteAction = async () => {
+        const body: InsightActionBody = {
+            method: 'delete',
+            company_id: company_id,
+            notes: "",
+            insight_id: insight_id,
+        }
+        
+        const res = await fetch('/api/insight_action', {
+            method: 'POST',
+            body: JSON.stringify(body)
+        })
+
+        if(res.status === 200) {
+            refresh_insights();
+            setDialogOpen(false);
+        } else {
+            const err = await res.json();
+            toast(err['error'])
+        }
+    };
+
+    return (
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>
+                        Delete your Insight
+                    </DialogTitle>
+                    <DialogDescription>
+                        Confirming this delete with remove your insight from this company. Are you sure?
+                    </DialogDescription>
+                </DialogHeader>
+
+                <div className="w-full flex justify-end">
+                    <Button onClick={deleteAction} variant="destructive">
+                        Delete Insight
+                        <Trash2 className="ml-2 h-4 w-4" />
+                    </Button>
+                </div>
+            </DialogContent>
+        </Dialog>
+    );
 }

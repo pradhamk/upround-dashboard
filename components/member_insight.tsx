@@ -3,38 +3,77 @@
 import { EnrichedAnalystInsight } from "@/utils/utils";
 import { Card, CardHeader, CardContent } from "./ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { User } from "@supabase/supabase-js";
-import { Pencil } from "lucide-react";
-import MemberInsightAction from "./MemberInsightAction";
+import { MessageSquareDiff, Pencil, Trash2 } from "lucide-react";
+import { MemberInsightAction, MemberInsightDelete } from "./MemberInsightAction";
+import { Button } from "./ui/button";
+import { createClient } from "@/utils/supabase/client";
 
 type MemberInsightProps = {
     insight: EnrichedAnalystInsight,
     editable?: boolean,
-    onEditClick: (id: string) => void
+    onEditClick: (mode: 'edit' | 'create' | 'delete', id?: string) => void
 }
 
-export default function MemberInsightsDisplay({ insights, user }: { insights: EnrichedAnalystInsight[] | null, user: User | null }) {
-    const [editOpen, setEditOpen] = useState(false);
+export default function MemberInsightsDisplay({ user, company_id }: { user: User | null, company_id: string }) {
+    const client = createClient();
+    const [insights, setInsights] = useState<EnrichedAnalystInsight[] | null>();
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [deleteOpen, setDeleteOpen] = useState(false);
+    const [actionMode, setActionMode] = useState<'edit' | 'create' | 'delete'>('create');
     const [selectedInsight, setSelectedInsight] = useState<{
         id?: string,
         notes?: string,
     }>({});
 
-    const handleEditClick = (id: string) => {
-        const insight = insights?.find(insight => insight.id === id);
-        if(insight) {
-            setSelectedInsight({
-                id: insight.id,
-                notes: insight.notes
-            });
-            setEditOpen(true);
+    const handleClick = (mode: 'edit' | 'create' | 'delete', id?: string) => {
+        setActionMode(mode);
+        if (mode === 'create') {
+            setSelectedInsight({});
+            setDialogOpen(true);
+            return;
         }
+
+        const insight = insights?.find(insight => insight.id === id);
+        if (!insight) return;
+
+        setSelectedInsight({
+            id: insight.id,
+            notes: insight.notes,
+        });
+
+        if (mode === 'delete') {
+            setDeleteOpen(true);
+        } else {
+            setDialogOpen(true);
+        }
+    };
+
+
+    const getInsights = () => {
+        client
+            .schema('dealflow')
+            .from('enriched_insights')
+            .select('*')
+            .eq('company', company_id)
+            .then(({ data }: { data: EnrichedAnalystInsight[] | null }) => {
+                setInsights(data)
+            })
     }
+
+    useEffect(() => {
+        getInsights();
+    }, [])
 
     return (
         <div className="mt-10">
-            <h1 className="font-bold text-xl mb-5">Analyst Insights:</h1>
+            <div className="flex justify-between w-full">
+                <h1 className="font-bold text-xl mb-5">Analyst Insights:</h1>
+                <Button size="icon" onClick={() => handleClick('create')}>
+                    <MessageSquareDiff />
+                </Button>
+            </div>
             {
                 !insights || insights.length === 0 ?
                 <h1 className="opacity-75">There are no comments for this company.</h1> : 
@@ -45,18 +84,29 @@ export default function MemberInsightsDisplay({ insights, user }: { insights: En
                                         key={i}
                                         insight={insight}
                                         editable={insight.user_email === user?.email}
-                                        onEditClick={handleEditClick}
+                                        onEditClick={handleClick}
                                     />
                         })
                     }
                 </div>
             }
             <MemberInsightAction 
-                editOpen={editOpen}
-                setEditOpen={setEditOpen}
+                dialogOpen={dialogOpen}
+                setDialogOpen={setDialogOpen}
+                company_id={company_id}
                 insight_id={selectedInsight.id}
                 insight_notes={selectedInsight.notes}
-                mode="edit"
+                mode={actionMode}
+                refresh_insights={getInsights}
+            />
+            <MemberInsightDelete 
+                dialogOpen={deleteOpen}
+                setDialogOpen={setDeleteOpen}
+                company_id={company_id}
+                insight_id={selectedInsight.id}
+                insight_notes=""
+                mode='delete'
+                refresh_insights={getInsights}
             />
         </div>
     )
@@ -86,11 +136,18 @@ export function MemberInsight({ insight, editable, onEditClick }: MemberInsightP
             </CardContent>
             {
                 editable &&
-                <Pencil 
-                    className="absolute right-5 top-5 cursor-pointer" 
-                    size={15}
-                    onClick={() => onEditClick(insight.id)}
-                />
+                <div className="absolute right-5 top-5 flex space-x-3">
+                    <Pencil 
+                        className="cursor-pointer" 
+                        size={15}
+                        onClick={() => onEditClick('edit', insight.id)}
+                    />
+                    <Trash2 
+                        className="cursor-pointer" 
+                        size={15}
+                        onClick={() => onEditClick('delete', insight.id)}
+                    />
+                </div>
             }
         </Card>
     )
