@@ -10,7 +10,7 @@ import UserEditDialog from "./dialogs/UserEditDialog";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 
-export default function UserSelect({ user }: UserSelectProps) {
+export default function UserSelect({ user, full_display = false }: UserSelectProps) {
     const router = useRouter();
     const client = createClient();
     const [profileEditOpen, setProfileEditOpen] = useState(false);
@@ -56,13 +56,22 @@ export default function UserSelect({ user }: UserSelectProps) {
         <>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Avatar className="size-8 cursor-pointer">
-                    <AvatarImage
-                        src={memberData?.pfp as string}
-                        title={user?.user_metadata.name}
-                    />
-                    <AvatarFallback>{user?.email}</AvatarFallback>
-                    </Avatar>
+                    <div className="flex space-x-2 items-center">
+                        <Avatar className="size-8 cursor-pointer">
+                            <AvatarImage
+                                src={memberData?.pfp as string}
+                                title={user?.user_metadata.name}
+                            />
+                            <AvatarFallback>{user?.email}</AvatarFallback>
+                        </Avatar>
+                        {
+                            full_display && 
+                            <div>
+                                <h1>{user?.user_metadata.name}</h1>
+                                <p className="text-sm opacity-75">{user?.email}</p>
+                            </div>
+                        }
+                    </div>
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent className="w-56" align="end">

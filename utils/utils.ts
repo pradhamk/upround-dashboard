@@ -18,6 +18,7 @@ export function encodedRedirect(
 
 export interface UserSelectProps {
   user: User | null;
+  full_display?: boolean;
 }
 
 // Could use supabase type generation here but this is more preferable
