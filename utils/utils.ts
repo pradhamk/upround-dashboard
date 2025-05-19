@@ -70,6 +70,21 @@ export type InsightActionBody = {
   insight_id?: string,
 };
 
+export enum DealflowStatus {
+  Contacted = "Contacted",
+  Call = "Call",
+  Memo_Written = "Memo Written",
+  Passed_To_Partners = "Passed To Partners",
+  Passed_To_Fund = "Passed To Fund",
+  Rejected = "Rejected"
+}
+
+export enum MVCLevel {
+  Yes = "Yes",
+  No = "No",
+  Not_Sure = "Not Sure"
+}
+
 export function generatePreview(url: string): string {
   return SEARCH_ICON_LINK + encodeURI(url);
 }
