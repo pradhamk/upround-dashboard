@@ -1,7 +1,7 @@
 "use client";
 
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, Plus, Send } from "lucide-react";
+import { Building2, ChevronLeft, ChevronRight, Plus, Send, User2 } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -12,7 +12,7 @@ import {
   DialogTrigger
 } from "./ui/dialog";
 import { Input } from "./ui/input";
-import { DealflowStatus, MemberProfile, MVCLevel } from "@/utils/utils";
+import { DealflowStatus, MemberProfile, MVCLevel, StartupProfile } from "@/utils/utils";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
@@ -31,7 +31,7 @@ type StringInputEntryProps = {
 
 type SelectInputEntryProps = {
     input: any,
-    setInput: Dispatch<any>,
+    setInput: Dispatch<SetStateAction<any>>,
     label: string,
     description?: string,
     items: any[],
@@ -67,7 +67,7 @@ const SelectInputEntry = ({ input, items, label, setInput, description, value_pr
         <div className="grid w-full items-center gap-1.5">
             <Label>{label}</Label>
             <p className="text-xs text-muted-foreground">{description}</p>
-            <Select onValueChange={(val) => setInput(val)} value={input}>
+            <Select onValueChange={(val: any) => setInput(val)} value={input}>
                 <SelectTrigger>
                     <SelectValue placeholder={label} />
                 </SelectTrigger>
@@ -90,7 +90,7 @@ const SelectInputEntry = ({ input, items, label, setInput, description, value_pr
     )
 }
 
-export default function CreateStartup() {
+export default function CreateStartup({ refresh }: { refresh: () => void }) {
     const client = createClient();
     const [open, setOpen] = useState(false);
     const [name, setName] = useState("");
@@ -109,48 +109,77 @@ export default function CreateStartup() {
     const [step, setStep] = useState(1);
     const total_steps = 2;
 
-    const isStep1Valid = () =>
-        name.trim() !== "" &&
-        industry.trim() !== "" &&
-        tagline.trim() !== "" &&
-        description.trim() !== "" &&
-        website.trim() !== "" &&
-        contact.trim() !== "";
-
-    const isStep2Valid = () =>
-        sourcer.trim() !== "" &&
-        source.trim() !== "" &&
-        date.trim() !== "" &&
-        status.trim() !== "" &&
-        mvc_level.trim() !== "";
-
-    const validateStep = (): boolean => {
+    const validateStep = (noti?: boolean): boolean => {
         let valid = true;
         if (step === 1) {
-            if (!name.trim()) { toast("Company Name is required."); valid = false; }
-            if (!industry.trim()) { toast("Industry is required."); valid = false; }
-            if (!tagline.trim()) { toast("Tagline is required."); valid = false; }
-            if (!description.trim()) { toast("Description is required."); valid = false; }
-            if (!website.trim()) { toast("Website is required."); valid = false; }
-            if (!contact.trim()) { toast("Contact is required."); valid = false; }
+            if (!name.trim()) { noti && toast("Company Name is required."); valid = false; }
+            else if (!industry.trim()) { noti && toast("Industry is required."); valid = false; }
+            else if (!tagline.trim()) { noti && toast("Tagline is required."); valid = false; }
+            else if (!description.trim()) { noti && toast("Description is required."); valid = false; }
+            else if (!website.trim()) { noti && toast("Website is required."); valid = false; }
+            else if (!contact.trim()) { noti && toast("Contact is required."); valid = false; }
         }
 
         if (step === 2) {
-            if (!sourcer.trim()) { toast("Sourcer is required."); valid = false; }
-            if (!source.trim()) { toast("Source is required."); valid = false; }
-            if (!date.trim()) { toast("Date Sourced is required."); valid = false; }
-            if (!status.trim()) { toast("Dealflow Status is required."); valid = false; }
-            if (!mvc_level.trim()) { toast("MVC Level is required."); valid = false; }
+            if (!sourcer.trim()) { noti && toast("Sourcer is required."); valid = false; }
+            else if (!source.trim()) { noti && toast("Source is required."); valid = false; }
+            else if (!date.trim()) { noti && toast("Date Sourced is required."); valid = false; }
+            else if (!status.trim()) { noti && toast("Dealflow Status is required."); valid = false; }
+            else if (!mvc_level.trim()) { noti && toast("MVC Level is required."); valid = false; }
         }
         return valid;
     }
 
-    const submitStartup = () => {
-        if(!validateStep()) {
+    const submitStartup = async () => {
+        if(!validateStep(true)) {
             return;
         }
 
-        setOpen(false);
+        const profile = createStartupProfile();
+        const res = await fetch('/api/new_startup', {
+            method: 'POST',
+            body: JSON.stringify(profile)
+        });
+
+        if(res.status === 200) {
+            await refresh();
+            setOpen(false);
+        } else {
+            const error = await res.json();
+            toast(error['error']);
+        }
+
+    }
+
+    const createStartupProfile = (): StartupProfile => {
+        return {
+            id: "",
+            name: name,
+            tagline: tagline,
+            contact: contact,
+            date_sourced: date,
+            description: description,
+            industry: industry,
+            mvc_level: mvc_level,
+            source: source,
+            sourcer: sourcer,
+            status: status,
+            website: website
+        };
+    }
+
+    const clearInputs = () => {
+        setName("");
+        setTagline("");
+        setContact("");
+        setDate("");
+        setDescription("");
+        setIndustry("");
+        setMVCLevel("");
+        setSource("");
+        setSourcer("");
+        setStatus("");
+        setWebsite("");
     }
 
     useEffect(() => {
@@ -182,43 +211,49 @@ export default function CreateStartup() {
         <div className="grid gap-4 w-full">
             {step === 1 && (
                 <div className="gap-4 grid">
-                <h1 className="font-semibold">Company Details</h1>
-                <StringInputEntry label="Company Name" input={name} setInput={setName} />
-                <StringInputEntry label="Industry" input={industry} setInput={setIndustry} />
-                <StringInputEntry label="Tagline" input={tagline} setInput={setTagline} description="Provide a short tagline for the company." />
-                <StringInputEntry label="Description" input={description} setInput={setDescription} description="Provide a longer description about the company (summary of your analysis in 1-2 paragraphs)" large />
-                <StringInputEntry label="Company Website" input={website} setInput={setWebsite} />
-                <StringInputEntry label="Contact" input={contact} setInput={setContact} description="What email address did you reach out to?" />
+                    <div className="flex space-x-2">
+                        <Building2 />
+                        <h1 className="font-semibold">Company Details</h1>
+                    </div>
+                    <StringInputEntry label="Company Name" input={name} setInput={setName} />
+                    <StringInputEntry label="Industry" input={industry} setInput={setIndustry} />
+                    <StringInputEntry label="Tagline" input={tagline} setInput={setTagline} description="Provide a short tagline for the company." />
+                    <StringInputEntry label="Description" input={description} setInput={setDescription} description="Provide a longer description about the company (summary of your analysis in 1-2 paragraphs)" large />
+                    <StringInputEntry label="Company Website" input={website} setInput={setWebsite} />
+                    <StringInputEntry label="Contact" input={contact} setInput={setContact} description="What email address did you reach out to?" />
                 </div>
             )}
 
             {step === 2 && (
                 <div className="gap-6 grid">
-                <h1 className="font-semibold">Analysis Details</h1>
-                <SelectInputEntry
-                    label="Sourcer"
-                    input={sourcer}
-                    setInput={setSourcer}
-                    items={members || []}
-                    description="Which member sourced the company?"
-                    value_property={"id"}
-                />
-                <StringInputEntry label="Source" input={source} setInput={setSource} description="Where did you find the company (pitchbook, etc.)?" />
-                <StringInputEntry label="Date Sourced" input={date} setInput={setDate} type="date" />
-                <SelectInputEntry
-                    label="Dealflow Status"
-                    input={status}
-                    setInput={setStatus}
-                    items={Object.values(DealflowStatus)}
-                    description="What is the status of this company?"
-                />
-                <SelectInputEntry
-                    label="MVC Level"
-                    input={mvc_level}
-                    setInput={setMVCLevel}
-                    items={Object.values(MVCLevel)}
-                    description="Is this company an option for MVC?"
-                />
+                    <div className="flex space-x-2">
+                        <User2 />
+                        <h1 className="font-semibold">Analysis Details</h1>
+                    </div>
+                    <SelectInputEntry
+                        label="Sourcer"
+                        input={sourcer}
+                        setInput={setSourcer}
+                        items={members || []}
+                        description="Which member sourced the company?"
+                        value_property={"id"}
+                    />
+                    <StringInputEntry label="Source" input={source} setInput={setSource} description="Where did you find the company (pitchbook, etc.)?" />
+                    <StringInputEntry label="Date Sourced" input={date} setInput={setDate} type="date" />
+                    <SelectInputEntry
+                        label="Dealflow Status"
+                        input={status}
+                        setInput={setStatus}
+                        items={Object.values(DealflowStatus)}
+                        description="What is the status of this company?"
+                    />
+                    <SelectInputEntry
+                        label="MVC Level"
+                        input={mvc_level}
+                        setInput={setMVCLevel}
+                        items={Object.values(MVCLevel)}
+                        description="Is this company an option for MVC?"
+                    />
                 </div>
             )}
         </div>
@@ -232,7 +267,7 @@ export default function CreateStartup() {
             )}
             {step < total_steps ? (
                 <Button onClick={() => {
-                    if (validateStep()) {
+                    if (validateStep(true)) {
                         setStep(step + 1);
                     }
                 }}>
@@ -240,7 +275,7 @@ export default function CreateStartup() {
                     <ChevronRight />
                 </Button>
             ) : (
-                <Button type="submit"  onClick={submitStartup}>
+                <Button type="submit" disabled={!validateStep()} onClick={submitStartup}>
                     Submit
                     <Send />
                 </Button>

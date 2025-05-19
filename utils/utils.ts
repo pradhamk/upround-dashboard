@@ -44,7 +44,6 @@ export type StartupProfile = {
   status: string,
   source: string,
   mvc_level: string,
-  notes: string,
   date_sourced: string,
   website: string,
   description: string,

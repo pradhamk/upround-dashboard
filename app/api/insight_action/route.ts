@@ -15,10 +15,6 @@ export async function POST(request: Request) {
     const { data: userData } = await supabase.auth.getUser();
     const userEmail = userData?.user?.email;
 
-    if (!userEmail) {
-        return NextResponse.json({ error: 'User not authenticated' }, { status: 401 });
-    }
-
     const { data: memberProfile, error: memberError } = await supabase
         .schema('members')
         .from('profiles')
