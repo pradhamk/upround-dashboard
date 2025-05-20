@@ -84,6 +84,10 @@ export default function StartupsList({ is_admin }: { is_admin: boolean }) {
     }, []);
 
     useEffect(() => {
+
+    }, [displayStartups])
+
+    useEffect(() => {
         const trimmedSearch = search.trim().toLowerCase();
         const filtered = startups.filter((startup) => {
             return trimmedSearch === "" || startup.name.toLowerCase().startsWith(trimmedSearch);
