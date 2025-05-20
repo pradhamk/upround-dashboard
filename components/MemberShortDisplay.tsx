@@ -1,8 +1,6 @@
 "use client";
 
-import { createClient } from "@/utils/supabase/client";
 import { MemberProfile } from "@/utils/utils";
-import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export function MemberShortDisplay({
@@ -15,7 +13,7 @@ export function MemberShortDisplay({
   if (!member) return null;
 
   return (
-    <div className="flex items-center gap-x-1">
+    <div className={`${sm ? 'hidden xl:flex' : 'flex'} items-center gap-x-1`}>
       <Avatar className="size-5">
         <AvatarImage src={member.pfp as string} />
         <AvatarFallback>{member.name} Profile</AvatarFallback>

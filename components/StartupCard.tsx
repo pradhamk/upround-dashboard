@@ -3,12 +3,15 @@
 import { generatePreview, MemberProfile, StartupProfile } from "@/utils/utils";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { ChevronRight, CalendarDays, Handshake, LinkIcon, Mail, UserSearch, SearchCheck, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { MemberShortDisplay } from "./MemberShortDisplay";
 import UpRoundLogo from "@/components/upround_logo";
 import { Button } from "./ui/button";
+import DeleteDialog from "./dialogs/DeleteDialog";
+import { toast } from "sonner";
+import { useRouter } from 'next/navigation'
 
 type StartupCardProps = {
   startup: StartupProfile,
@@ -35,7 +38,7 @@ export default function StartupCard({ startup, member, can_delete, deleteStartup
                 <span className="text-xs text-gray-600">{startup.industry}</span>
               </div>
               <div className="flex items-center justify-between gap-2">
-                <MemberShortDisplay member={member} sm />
+                <MemberShortDisplay member={member} sm/>
                 {can_delete && (
                   <Button
                     className="p-1 hover:bg-red-100 text-red-600"
@@ -81,57 +84,93 @@ const SocialButton = ({ url, children }: { url: string, children: ReactNode }) =
     </Button>
 )
 
-export function StartupGeniusCard({ startup, member }: { startup: StartupProfile, member: MemberProfile | null }) {
+export function StartupGeniusCard({ startup, member, is_admin }: { startup: StartupProfile, member: MemberProfile | null, is_admin: boolean }) {
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const router = useRouter();
+  
+  const deleteStartup = async () => {
+    const res = await fetch('/api/startup_action', {
+        method: 'POST',
+        body: JSON.stringify({
+            method: 'delete',
+            company_id: startup.id,
+        })
+    })
+
+    if(res.status === 200) {
+        setDeleteOpen(false);
+        router.push('/startups')
+    } else {
+        const err = await res.json();
+        toast(err['error']);
+    }
+  }
+
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-          <h1 className="text-left font-bold text-xl">{startup.name}</h1>
-          <Avatar className="rounded-lg size-12">
-              <AvatarImage src={generatePreview(startup.website)}/>
-              <AvatarFallback>{startup.name} Logo</AvatarFallback>
-          </Avatar>
-      </CardHeader>
-      <CardContent className="space-y-4">
-          <InfoRow icon={<CalendarDays size={14} />} label="Sourced Date:">
-              {new Date(startup.date_sourced).toLocaleDateString("en-us", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              })}
-          </InfoRow>
-          <InfoRow icon={<UserSearch size={14} />} label="Sourced By:">
-              <MemberShortDisplay member={member} />
-          </InfoRow>
-          <InfoRow icon={<SearchCheck size={14} />} label="Sourced From:">
-              { startup.source }
-          </InfoRow>
-          <InfoRow icon={<Handshake size={14} />} label="Dealflow Status:">
-              {startup.status}
-          </InfoRow>
-          <InfoRow icon={<UpRoundLogo width={14} height={14} colorWithTheme/>} label="MVC Level:">
-              <div className="flex items-center space-x-1">
-                <div
-                    className={`w-3 h-3 rounded-full ${
-                    startup.mvc_level === "Yes"
-                        ? "bg-green-500"
-                        : startup.mvc_level === "No"
-                        ? "bg-red-500"
-                        : "bg-orange-400"
-                    }`}
-                />
-                <span>{startup.mvc_level}</span>
-              </div>
-          </InfoRow>
-          <div className="border-t border-gray-200 my-2" />
-      </CardContent>
-      <CardFooter className="flex justify-center space-x-10">
-          <SocialButton url={startup.website}>
-              <LinkIcon />
-          </SocialButton>
-          <SocialButton url={`mailto:${startup.contact}`}>
-              <Mail />
-          </SocialButton>
-      </CardFooter>
-  </Card>
+    <>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+            <h1 className="text-left font-bold text-xl">{startup.name}</h1>
+            <Avatar className="rounded-lg size-12">
+                <AvatarImage src={generatePreview(startup.website)}/>
+                <AvatarFallback>{startup.name} Logo</AvatarFallback>
+            </Avatar>
+        </CardHeader>
+        <CardContent className="space-y-4">
+            <InfoRow icon={<CalendarDays size={14} />} label="Sourced Date:">
+                {new Date(startup.date_sourced).toLocaleDateString("en-us", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                })}
+            </InfoRow>
+            <InfoRow icon={<UserSearch size={14} />} label="Sourced By:">
+                <MemberShortDisplay member={member} />
+            </InfoRow>
+            <InfoRow icon={<SearchCheck size={14} />} label="Sourced From:">
+                { startup.source }
+            </InfoRow>
+            <InfoRow icon={<Handshake size={14} />} label="Dealflow Status:">
+                {startup.status}
+            </InfoRow>
+            <InfoRow icon={<UpRoundLogo width={14} height={14} colorWithTheme/>} label="MVC Level:">
+                <div className="flex items-center space-x-1">
+                  <div
+                      className={`w-3 h-3 rounded-full ${
+                      startup.mvc_level === "Yes"
+                          ? "bg-green-500"
+                          : startup.mvc_level === "No"
+                          ? "bg-red-500"
+                          : "bg-orange-400"
+                      }`}
+                  />
+                  <span>{startup.mvc_level}</span>
+                </div>
+            </InfoRow>
+            <div className="border-t border-gray-200 my-2" />
+        </CardContent>
+        <CardFooter className="flex justify-center space-x-10">
+            <SocialButton url={startup.website}>
+                <LinkIcon />
+            </SocialButton>
+            <SocialButton url={`mailto:${startup.contact}`}>
+                <Mail />
+            </SocialButton>
+            {
+              is_admin &&
+              <Button size={"icon"} variant={"destructive"} onClick={() => setDeleteOpen(true)}>
+                  <Trash2 />
+              </Button>
+            }
+        </CardFooter>
+    </Card>
+    <DeleteDialog 
+      open={deleteOpen}
+      setOpen={setDeleteOpen}
+      title="Delete the Startup"
+      description="Confirming this delete will remove the company from the startups db. Are you sure?"
+      deleteAction={deleteStartup}
+    />
+    </>
   )
 }

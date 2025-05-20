@@ -2,6 +2,7 @@ import MemberInsightsDisplay from "@/components/member_insight";
 import { StartupGeniusCard } from "@/components/StartupCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createClient } from "@/utils/supabase/server";
+import { isAdmin } from "@/utils/supabase/utils";
 import { EnrichedAnalystInsight, generatePreview, MemberProfile, StartupProfile } from "@/utils/utils";
 import { redirect } from "next/navigation";
 
@@ -33,6 +34,7 @@ export default async function StartupProfilePage({ searchParams }: { searchParam
                         .single();
 
     const user = (await client.auth.getUser()).data.user;
+    const is_admin = await isAdmin(client);
 
     return (
         <main className="w-full flex flex-col-reverse lg:flex-row lg:items-start justify-center mt-12 gap-8 px-4">
@@ -59,7 +61,7 @@ export default async function StartupProfilePage({ searchParams }: { searchParam
             </div>
 
             <div className="w-full lg:w-1/5">
-                <StartupGeniusCard startup={data} member={sourcer} />
+                <StartupGeniusCard startup={data} member={sourcer} is_admin={is_admin} />
             </div>
         </main>
     ) 
