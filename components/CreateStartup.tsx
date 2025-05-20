@@ -147,6 +147,7 @@ export default function CreateStartup({ refresh }: { refresh: () => void }) {
         if(res.status === 200) {
             await refresh();
             setOpen(false);
+            clearInputs();
         } else {
             const error = await res.json();
             toast(error['error']);
@@ -199,8 +200,8 @@ export default function CreateStartup({ refresh }: { refresh: () => void }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button onClick={() => setOpen(true)}>
-          <Plus className="mr-2" />
-          New Startup
+          <Plus />
+          <span className="hidden md:flex">New Startup</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="w-full max-w-5xl max-h-[80vh] overflow-y-auto ">

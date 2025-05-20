@@ -118,11 +118,14 @@ export function StartupGeniusCard({ startup, member, is_admin }: { startup: Star
         </CardHeader>
         <CardContent className="space-y-4">
             <InfoRow icon={<CalendarDays size={14} />} label="Sourced Date:">
-                {new Date(startup.date_sourced).toLocaleDateString("en-us", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                })}
+                {(() => {
+                  const [year, month, day] = startup.date_sourced.split("-").map(Number);
+                  return new Date(year, month - 1, day).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  });
+                })()}
             </InfoRow>
             <InfoRow icon={<UserSearch size={14} />} label="Sourced By:">
                 <MemberShortDisplay member={member} />
