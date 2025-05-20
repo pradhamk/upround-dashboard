@@ -6,12 +6,16 @@ import ServerErrorDialog from "./dialogs/ErrorDialog";
 import { createClient } from "@/utils/supabase/client";
 import { MemberProfile, StartupProfile } from "@/utils/utils";
 import CreateStartup from "./CreateStartup";
+import DeleteDialog from "./dialogs/DeleteDialog";
+import { toast } from "sonner";
 
-export default function StartupsList() {
+export default function StartupsList({ is_admin }: { is_admin: boolean }) {
     const client = createClient();
     const [startups, setStartups] = useState<StartupProfile[]>([]);
     const [memberMap, setMemberMap] = useState<Map<string, MemberProfile>>(new Map());
     const [errorOpen, setErrorOpen] = useState(false);
+    const [deleteOpen, setDeleteOpen] = useState(false);
+    const [delStartupId, setDelStartupId] = useState("");
 
     const getData = async () => {
         const { data: startupsData, error: startupError } = await client
@@ -42,6 +46,29 @@ export default function StartupsList() {
         setMemberMap(map);
     }
 
+    const openDeletePrompt = (id: string) => {
+        setDelStartupId(id);
+        setDeleteOpen(true);
+    }
+
+    const deleteStartup = async () => {
+        const res = await fetch('/api/startup_action', {
+            method: 'POST',
+            body: JSON.stringify({
+                method: 'delete',
+                company_id: delStartupId,
+            })
+        })
+
+        if(res.status === 200) {
+            await getData();
+            setDeleteOpen(false);
+        } else {
+            const err = await res.json();
+            toast(err['error']);
+        }
+    }
+
     useEffect(() => {
         (async () => getData())();
     }, []);
@@ -58,9 +85,18 @@ export default function StartupsList() {
                         key={startup.id}
                         startup={startup}
                         member={memberMap.get(startup.sourcer)}
+                        can_delete={is_admin}
+                        deleteStartup={openDeletePrompt}
                     />
                 ))}
             </div>
+            <DeleteDialog 
+                open={deleteOpen}
+                setOpen={setDeleteOpen}
+                deleteAction={deleteStartup}
+                title="Delete the Startup"
+                description="Confirming this delete will remove the company from the startups db. Are you sure?"
+            />
             <ServerErrorDialog
                 open={errorOpen}
                 description="The server failed to load the startups. This could be due to your authentication or a server-side error. Please try refreshing the page. If the issue persists, contact an admin."

@@ -136,9 +136,12 @@ export default function CreateStartup({ refresh }: { refresh: () => void }) {
         }
 
         const profile = createStartupProfile();
-        const res = await fetch('/api/new_startup', {
+        const res = await fetch('/api/startup_action', {
             method: 'POST',
-            body: JSON.stringify(profile)
+            body: JSON.stringify({
+                method: 'create',
+                profile: profile
+            })
         });
 
         if(res.status === 200) {
@@ -189,7 +192,6 @@ export default function CreateStartup({ refresh }: { refresh: () => void }) {
             .select('*')
             .then(({ data }: { data: MemberProfile[] | null }) => {
                 setMembers(data?.filter((member) => member.completed === true));
-                console.log(members)
             })
     }, [])
 

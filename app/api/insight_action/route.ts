@@ -83,7 +83,7 @@ export async function POST(request: Request) {
                 .delete()
                 .eq('id', data.insight_id)
                 .select();
-            console.log(deleteError)
+
             if(deleteError) {
                 return NextResponse.json({ error: 'Failed to delete insight' }, { status: 400 });
             }

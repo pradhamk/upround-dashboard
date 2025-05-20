@@ -4,14 +4,20 @@ import { generatePreview, MemberProfile, StartupProfile } from "@/utils/utils";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { ReactNode } from "react";
-import { ChevronRight, CalendarDays, Handshake, LinkIcon, Mail, UserSearch, SearchCheck } from "lucide-react";
+import { ChevronRight, CalendarDays, Handshake, LinkIcon, Mail, UserSearch, SearchCheck, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { MemberShortDisplay } from "./MemberShortDisplay";
 import UpRoundLogo from "@/components/upround_logo";
 import { Button } from "./ui/button";
 
+type StartupCardProps = {
+  startup: StartupProfile,
+  member: MemberProfile | undefined,
+  can_delete: boolean,
+  deleteStartup: (id: string) => void
+};
 
-export default function StartupCard({ startup, member }: { startup: StartupProfile, member: MemberProfile | undefined }) {
+export default function StartupCard({ startup, member, can_delete, deleteStartup }: StartupCardProps) {
   return (
     <Link href={`/startup_profile?id=${startup.id}`}>
       <Card className="w-full rounded-2xl flex relative cursor-pointer shadow">
@@ -28,7 +34,19 @@ export default function StartupCard({ startup, member }: { startup: StartupProfi
                 <h1 className="text-lg font-semibold">{startup.name}</h1>
                 <span className="text-xs text-gray-600">{startup.industry}</span>
               </div>
-              <MemberShortDisplay member={member} sm />
+              <div className="flex items-center justify-between gap-2">
+                <MemberShortDisplay member={member} sm />
+                {can_delete && (
+                  <Button
+                    className="p-1 hover:bg-red-100 text-red-600"
+                    variant="ghost"
+                    size="icon"
+                    onClick={(e) => {e.preventDefault(); deleteStartup(startup.id)}}
+                  >
+                    <Trash2 size={16} />
+                  </Button>
+                )}
+              </div>
             </div>
             <p className="text-sm opacity-85 truncate w-11/12">{startup.tagline}</p>
           </div>

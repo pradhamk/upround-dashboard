@@ -7,6 +7,7 @@ import { Send, Trash2 } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { InsightActionBody } from "@/utils/utils";
 import { toast } from "sonner";
+import DeleteDialog from "./dialogs/DeleteDialog";
 
 type EditProps = {
     dialogOpen: boolean;
@@ -116,24 +117,12 @@ export function MemberInsightDelete({ dialogOpen, insight_id, company_id, refres
     };
 
     return (
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>
-                        Delete your Insight
-                    </DialogTitle>
-                    <DialogDescription>
-                        Confirming this delete with remove your insight from this company. Are you sure?
-                    </DialogDescription>
-                </DialogHeader>
-
-                <div className="w-full flex justify-end">
-                    <Button onClick={deleteAction} variant="destructive">
-                        Delete Insight
-                        <Trash2 className="ml-2 h-4 w-4" />
-                    </Button>
-                </div>
-            </DialogContent>
-        </Dialog>
+        <DeleteDialog 
+            open={dialogOpen}
+            setOpen={setDialogOpen}
+            title="Delete your Insight"
+            description="Confirming this delete will remove your insight from this company. Are you sure?"
+            deleteAction={deleteAction}
+        />
     );
 }

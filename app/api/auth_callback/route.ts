@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { SupabaseClient } from '@supabase/supabase-js';
+import { getUserProfile } from '@/utils/supabase/utils';
 
 async function getUserFromCode(supabase: SupabaseClient, code: string) {
   const { data: user, error } = await supabase.auth.exchangeCodeForSession(code);
@@ -8,21 +9,6 @@ async function getUserFromCode(supabase: SupabaseClient, code: string) {
     throw new Error('Failed to exchange code for session');
   }
   return user;
-}
-
-async function getUserProfile(supabase: SupabaseClient, email: string) {
-  const { data, error } = await supabase
-    .schema('whitelist')
-    .from('profiles')
-    .select('*')
-    .eq('email', email)
-    .limit(1)
-    .single();
-
-  if (error || !data) {
-    throw new Error('User profile not found or invalid');
-  }
-  return data;
 }
 
 async function fetchProfilePicture(url: string) {
