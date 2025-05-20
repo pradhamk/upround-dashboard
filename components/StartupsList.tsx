@@ -13,6 +13,9 @@ import { Input } from "./ui/input";
 import StartupFilter from "./StartupFilter";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "./ui/pagination";
+
+const STARTUPS_PER_PAGE = 10;
 
 export default function StartupsList({ is_admin }: { is_admin: boolean }) {
     const client = createClient();
@@ -25,6 +28,8 @@ export default function StartupsList({ is_admin }: { is_admin: boolean }) {
     const [filterOpen, setFilterOpen] = useState(false);
 
     const [search, setSearch] = useState("");
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
 
     const getData = async () => {
         const { data: startupsData, error: startupError } = await client
@@ -84,7 +89,8 @@ export default function StartupsList({ is_admin }: { is_admin: boolean }) {
     }, []);
 
     useEffect(() => {
-
+        setPage(1);
+        setTotalPages(Math.ceil(displayStartups.length / STARTUPS_PER_PAGE));
     }, [displayStartups])
 
     useEffect(() => {
@@ -127,15 +133,60 @@ export default function StartupsList({ is_admin }: { is_admin: boolean }) {
                     />
                 </div>
                 <div className="w-full flex flex-col gap-y-2">
-                    {displayStartups.map((startup) => (
+                    {displayStartups
+                    .slice((page - 1) * STARTUPS_PER_PAGE, page * STARTUPS_PER_PAGE)
+                    .map((startup) => (
                         <StartupCard
-                            key={startup.id}
-                            startup={startup}
-                            member={memberMap.get(startup.sourcer)}
-                            can_delete={is_admin}
-                            deleteStartup={openDeletePrompt}
+                        key={startup.id}
+                        startup={startup}
+                        member={memberMap.get(startup.sourcer)}
+                        can_delete={is_admin}
+                        deleteStartup={openDeletePrompt}
                         />
                     ))}
+                    <Pagination>
+                        <PaginationContent>
+                            <PaginationItem>
+                                <PaginationPrevious 
+                                    onClick={() => setPage(prev => Math.max(1, prev - 1))} 
+                                />
+                            </PaginationItem>
+
+                            {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                .filter(p => {
+                                    if (totalPages <= 3) return true;
+                                    if (page === 1) return p <= 3;
+                                    if (page === totalPages) return p >= totalPages - 2;
+                                    return Math.abs(p - page) <= 1;
+                                })
+                                .map(p => (
+                                    <PaginationItem key={p}>
+                                    <PaginationLink
+                                        isActive={page === p}
+                                        onClick={() => setPage(p)}
+                                    >
+                                        {p}
+                                    </PaginationLink>
+                                    </PaginationItem>
+                                ))
+                            }
+
+                            {
+                                page <= totalPages - 2 && (
+                                    <PaginationItem>
+                                        <PaginationEllipsis />
+                                    </PaginationItem>
+                                )
+                            }
+
+                            <PaginationItem>
+                                <PaginationNext 
+                                    onClick={() => setPage(prev => Math.min(totalPages, prev + 1))}
+                                />
+                            </PaginationItem>
+                    </PaginationContent>
+                </Pagination>
+
                 </div>
             </div>
             <Dialog open={filterOpen} onOpenChange={setFilterOpen}>

@@ -5,7 +5,7 @@ import { isAdmin } from '@/utils/supabase/utils';
 
 type CreateReqBody = {
     method: 'create',
-    profile: Omit<StartupProfile, 'id'>;
+    profile: StartupProfile
 };
 
 type DeleteReqBody = {
@@ -23,10 +23,11 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
 
+    console.log(data)
     switch(data.method) {
         case 'create': {
             //make sure all fields are filled out
-            const { profile } = data;
+            const { id, ...profile } = data.profile;
             for(const [key, value] of Object.entries(profile)) {
                 if(!value.trim()) {
                     return NextResponse.json({ error: `${key} can't be empty` }, { status: 400 });
@@ -77,10 +78,16 @@ export async function POST(request: Request) {
                 return NextResponse.json({ error: 'No such sourcer exists' }, { status: 400 });
             }
             
-            const { error } = await supabase
-                                .schema('dealflow')
-                                .from('startups')
-                                .insert(profile);
+            let i =0;
+            let error = null;
+            while(i < 100) {
+                const { error } = await supabase
+                                    .schema('dealflow')
+                                    .from('startups')
+                                    .insert(profile);
+                i += 1;
+                console.log('Inserted ', i);
+            }
 
             if(error) {
                 return NextResponse.json({ error: 'Failed to create startup. Try again later.' }, { status: 400 });
