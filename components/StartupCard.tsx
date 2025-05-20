@@ -1,6 +1,6 @@
 "use client";
 
-import { generatePreview, MemberProfile, StartupProfile } from "@/utils/utils";
+import { convertDate, generatePreview, MemberProfile, StartupProfile } from "@/utils/utils";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { ReactNode, useState } from "react";
@@ -15,12 +15,12 @@ import { useRouter } from 'next/navigation'
 
 type StartupCardProps = {
   startup: StartupProfile,
-  member: MemberProfile | undefined,
-  can_delete: boolean,
-  deleteStartup: (id: string) => void
+  member?: MemberProfile | undefined,
+  can_delete?: boolean,
+  deleteStartup?: (id: string) => void
 };
 
-export default function StartupCard({ startup, member, can_delete, deleteStartup }: StartupCardProps) {
+export default function StartupCard({ startup, member, can_delete = false, deleteStartup }: StartupCardProps) {
   return (
     <Link href={`/startup_profile?id=${startup.id}`}>
       <Card className="w-full rounded-2xl flex relative cursor-pointer shadow">
@@ -38,13 +38,16 @@ export default function StartupCard({ startup, member, can_delete, deleteStartup
                 <span className="text-xs text-gray-600">{startup.industry}</span>
               </div>
               <div className="flex items-center justify-between gap-2">
-                <MemberShortDisplay member={member} sm/>
+                {
+                  member &&
+                  <MemberShortDisplay member={member} sm/>
+                }
                 {can_delete && (
                   <Button
                     className="p-1 hover:bg-red-100 text-red-600"
                     variant="ghost"
                     size="icon"
-                    onClick={(e) => {e.preventDefault(); deleteStartup(startup.id)}}
+                    onClick={(e) => {e.preventDefault(); deleteStartup?.(startup.id)}}
                   >
                     <Trash2 size={16} />
                   </Button>
@@ -54,7 +57,7 @@ export default function StartupCard({ startup, member, can_delete, deleteStartup
             <p className="text-sm opacity-85 truncate w-11/12">{startup.tagline}</p>
           </div>
         </CardContent>
-        <ChevronRight className="absolute right-3 bottom-3 size-5"/>
+        <ChevronRight className={`absolute right-3 ${member ? 'bottom-3' : 'top-3'} size-5`}/>
       </Card>
     </Link>
   );
@@ -118,14 +121,7 @@ export function StartupGeniusCard({ startup, member, is_admin }: { startup: Star
         </CardHeader>
         <CardContent className="space-y-4">
             <InfoRow icon={<CalendarDays size={14} />} label="Sourced Date:">
-                {(() => {
-                  const [year, month, day] = startup.date_sourced.split("-").map(Number);
-                  return new Date(year, month - 1, day).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  });
-                })()}
+                {convertDate(startup.date_sourced)}
             </InfoRow>
             <InfoRow icon={<UserSearch size={14} />} label="Sourced By:">
                 <MemberShortDisplay member={member} />

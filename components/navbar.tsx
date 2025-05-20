@@ -4,10 +4,10 @@ import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import UserSelect from "./user-select";
 import { Sheet, SheetContent, SheetFooter, SheetTitle, SheetTrigger } from "./ui/sheet";
-import { Building2, Calendar1, Icon, LucideIcon, Menu, NotepadText, Users } from "lucide-react";
+import { Building2, Calendar1, Gavel, Icon, LucideIcon, Menu, NotepadText, Users } from "lucide-react";
 import React from "react";
-
-const CALENDAR = "https://calendar.google.com/calendar/embed?src=c_6c061cb479b2083c2c2001fa4d889282e7a25aad50037f2c6ccac7b785a62772%40group.calendar.google.com&ctz=America%2FLos_Angeles";
+import { isAdmin } from "@/utils/supabase/utils";
+import { CALENDAR } from "@/utils/utils";
 
 type NavItemProps = {
   href: string,
@@ -30,6 +30,7 @@ const NavItem = ({ href, children, external = false }: NavItemProps) => {
 export default async function Navbar() {
   const client = await createClient();
   const { user: user } = (await client.auth.getUser()).data;
+  const is_admin = await isAdmin(client);
 
   return (
       <div className="w-full flex items-center justify-between px-10 pt-2">
@@ -53,6 +54,12 @@ export default async function Navbar() {
               <Link href="/members" className="hover:text-[#12AE8A] hover:underline">
                 <p>Members</p>
               </Link>
+              {
+                is_admin &&
+                <Link href="/admin" className="hover:text-[#12AE8A] hover:underline">
+                  <p>Admin</p>
+                </Link>
+              }
             </div>
 
             <div className="flex items-center space-x-2">
@@ -92,6 +99,13 @@ export default async function Navbar() {
                     <Users />
                     Members
                   </NavItem>
+                  {
+                    is_admin &&
+                    <NavItem href="/members">
+                      <Gavel />
+                      Admin
+                    </NavItem>
+                  }
                 </div>
               </SheetContent>
             </Sheet>

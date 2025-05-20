@@ -78,17 +78,10 @@ export async function POST(request: Request) {
                 return NextResponse.json({ error: 'No such sourcer exists' }, { status: 400 });
             }
             
-            let i =0;
-            let error = null;
-            while(i < 100) {
-                const { error } = await supabase
+            const { error } = await supabase
                                     .schema('dealflow')
                                     .from('startups')
                                     .insert(profile);
-                i += 1;
-                console.log('Inserted ', i);
-            }
-
             if(error) {
                 return NextResponse.json({ error: 'Failed to create startup. Try again later.' }, { status: 400 });
             }

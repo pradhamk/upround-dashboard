@@ -137,11 +137,11 @@ export default function StartupsList({ is_admin }: { is_admin: boolean }) {
                     .slice((page - 1) * STARTUPS_PER_PAGE, page * STARTUPS_PER_PAGE)
                     .map((startup) => (
                         <StartupCard
-                        key={startup.id}
-                        startup={startup}
-                        member={memberMap.get(startup.sourcer)}
-                        can_delete={is_admin}
-                        deleteStartup={openDeletePrompt}
+                            key={startup.id}
+                            startup={startup}
+                            member={memberMap.get(startup.sourcer)}
+                            can_delete={is_admin}
+                            deleteStartup={openDeletePrompt}
                         />
                     ))}
                     <Pagination>

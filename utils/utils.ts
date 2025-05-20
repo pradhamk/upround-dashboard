@@ -84,11 +84,36 @@ export enum MVCLevel {
   Not_Sure = "Not Sure"
 }
 
+export type CalendarEvent = {
+  summary: string,
+  created: string,
+  location?: string,
+}
+
 export function generatePreview(url: string): string {
   return SEARCH_ICON_LINK + encodeURI(url);
+}
+
+export function convertDate(date: string) {
+  let dateString;
+
+  if (date.includes('T')) {
+    dateString = new Date(date);
+  } else {
+    const [year, month, day] = date.split('-').map(Number);
+    dateString = new Date(year, month - 1, day);
+  }
+
+  return dateString.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 export const MAX_INPUT_SIZE = 40;
 export const MAX_ABOUT_SIZE = 400;
 export const BASE_LINKEDIN_URL = "https://linkedin.com/in/";
 export const SEARCH_ICON_LINK = "https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=";
+export const CALENDAR = 'https://calendar.google.com/calendar/embed?src=c_6c061cb479b2083c2c2001fa4d889282e7a25aad50037f2c6ccac7b785a62772%40group.calendar.google.com&ctz=America%2FLos_Angeles';
+export const CALENDAR_ID = 'c_6c061cb479b2083c2c2001fa4d889282e7a25aad50037f2c6ccac7b785a62772@group.calendar.google.com';
