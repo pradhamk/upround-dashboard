@@ -21,12 +21,15 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog";
 import MemberRolesSelect from "./MemberRolesSelect";
+import { Checkbox } from "./ui/checkbox";
+import { Label } from "./ui/label";
 
 export default function MemberTable({ members, whitelist }: { members: MemberProfile[], whitelist: WhitelistEntry[] }) {
     const [selected, setSelected] = useState<string | null>(null);
     const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
     const [editOpen, setEditOpen] = useState(false);
     const [delOpen, setDelOpen] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
     const router = useRouter();
 
     const openEditPrompt = (email: string) => {
@@ -34,6 +37,7 @@ export default function MemberTable({ members, whitelist }: { members: MemberPro
       if (!target) return;
 
       setSelected(email);
+      setIsAdmin(whitelist.find(entry => entry.email === target.email)?.is_admin || false);
       setSelectedRoles(target.club_roles);
       setEditOpen(true);
     };
@@ -61,11 +65,12 @@ export default function MemberTable({ members, whitelist }: { members: MemberPro
     }
 
     const editRoles = async () => {
-      const res = await fetch('/api/admin/edit_roles', {
+      const res = await fetch('/api/admin/edit_member', {
         method: "POST",
         body: JSON.stringify({
           email: selected,
-          roles: selectedRoles
+          roles: selectedRoles,
+          is_admin: isAdmin
         })
       })
 
@@ -166,6 +171,17 @@ export default function MemberTable({ members, whitelist }: { members: MemberPro
                 roles={selectedRoles}
                 setRoles={setSelectedRoles}
              />
+            <div className="grid w-full items-center gap-1.5">
+                <Label className="font-bold">Admin Member?</Label>
+                <p className="text-xs text-muted-foreground">Should the new member be an admin (they will have the same permissions you do)?</p>
+                <div className="flex space-x-2 items-center">
+                    <span className="text-xs">New Member is Admin: </span>
+                    <Checkbox 
+                        checked={isAdmin}
+                        onCheckedChange={(checked) => setIsAdmin(Boolean(checked))}
+                    />
+                </div>
+            </div>
              <div className="flex justify-end">
                 <Button onClick={editRoles}>
                   Edit

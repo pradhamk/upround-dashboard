@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   const supabase = await createClient();
 
-  let data: { email: string, roles: string[] };
+  let data: { email: string, roles: string[], is_admin: boolean };
   try {
     data = await request.json();
   } catch {
@@ -39,6 +39,16 @@ export async function POST(request: Request) {
 
   if (res.error) {
     return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
+  }
+
+  const whitelist_update = await supabase
+                            .schema('whitelist')
+                            .from('profiles')
+                            .update({ is_admin: data.is_admin })
+                            .eq('email', data.email);
+
+  if (res.error) {
+    return NextResponse.json({ error: 'Failed to modify user admin privs' }, { status: 500 });
   }
 
   return NextResponse.json({ message: 'ok.' }, { status: 200 });
