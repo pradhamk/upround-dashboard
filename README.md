@@ -1,4 +1,4 @@
-# 🚀 UpRound Ventures Dashboard
+# UpRound Ventures Dashboard
 
 A modern dashboard to manage startups and member profiles
 
