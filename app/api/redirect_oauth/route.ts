@@ -4,7 +4,6 @@ import { redirect } from "next/navigation"
 export async function GET() {
     const client = await createClient();
     const redirectURL = process.env.VERCEL_PROD_URL ? `https://${process.env.VERCEL_PROD_URL}/api/auth_callback` : "http://localhost:3000/api/auth_callback";
-    console.log("URL: ", redirectURL)
     const { data } = await client.auth.signInWithOAuth({
         provider: "google",
         options: {
