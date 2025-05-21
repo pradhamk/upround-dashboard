@@ -6,7 +6,7 @@ export async function GET() {
     const { data } = await client.auth.signInWithOAuth({
         provider: "google",
         options: {
-            redirectTo: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000/api/auth_callback"
+            redirectTo: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/api/auth_callback` : "http://localhost:3000/api/auth_callback"
         }
     });
 
