@@ -7,21 +7,20 @@ import { MemberProfile } from "@/utils/utils";
 
 export default async function Members() {
     let error_open = false;
-    const client = await createClient();
     const { data , error } = await getAllMembers();
 
-    if(!data) {
+    if(!data || error) {
         error_open = true;
     }
 
     const members = data?.filter((person) => person.completed) || [];
     let board = {
-        "board" : members.filter((member) => member.club_roles.includes('board')),
+        "board" : members.filter((member) => member.club_roles.includes('Board')),
     };
     let club = {
-        "fund": members.filter((member) => member.club_roles.includes('fund') && !board.board.includes(member)),
-        "accelerator": members.filter((member) => member.club_roles.includes('accelerator') && !board.board.includes(member)),
-        "dealflow": members.filter((member) => member.club_roles.includes('dealflow') && !board.board.includes(member)),
+        "fund": members.filter((member) => member.club_roles.includes('Fund') && !board.board.includes(member)),
+        "accelerator": members.filter((member) => member.club_roles.includes('Accelerator') && !board.board.includes(member)),
+        "dealflow": members.filter((member) => member.club_roles.includes('Dealflow') && !board.board.includes(member)),
     }
     const roles = {
         ...board,

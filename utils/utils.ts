@@ -62,6 +62,12 @@ export type EnrichedAnalystInsight = {
   user_email: string,
 };
 
+export type WhitelistEntry = {
+  id: string | null,
+  email: string,
+  is_admin: boolean
+}
+
 export type InsightActionBody = {
   method: 'create' | 'edit' | 'delete',
   notes: string,
@@ -88,6 +94,21 @@ export type CalendarEvent = {
   summary: string,
   created: string,
   location?: string,
+}
+
+export enum ClubRoles {
+  President = "President",
+  VP_Dealflow = "VP of Dealflow",
+  VP_Fund = "VP of Fund",
+  VP_Internal = "VP of Internal",
+  VP_External = "VP of External",
+  VP_Accelerator = "VP of Accelerator",
+  VP_Education = "VP of Education",
+  Accelerator = "Accelerator",
+  Fund = "Fund",
+  Dealflow = "Dealflow",
+  member = "Member",
+  board = "Board"
 }
 
 export function generatePreview(url: string): string {

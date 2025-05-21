@@ -18,7 +18,7 @@ export function MemberShortDisplay({
         <AvatarImage src={member.pfp as string} />
         <AvatarFallback>{member.name} Profile</AvatarFallback>
       </Avatar>
-      <h3 className={sm ? `text-sm` : ""}>{member.name}</h3>
+      <h3 className={sm ? `text-sm` : ""}>{member.name || "Unknown"}</h3>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
+import { isAdmin } from "./utils";
 
 export const updateSession = async (request: NextRequest) => {
   let response = NextResponse.next({
@@ -48,6 +49,12 @@ export const updateSession = async (request: NextRequest) => {
   if(!data || data.id !== user.user.id) {
     await supabase.auth.signOut();
     return NextResponse.redirect('https://www.uproundvc.org/join');
+  }
+
+  if(request.nextUrl.pathname === "/admin") {
+    if(!await isAdmin(supabase)) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
   }
 
   return response;

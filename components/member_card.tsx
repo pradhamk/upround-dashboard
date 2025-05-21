@@ -39,7 +39,7 @@ export default function MemberCard({ member_data, editable, setMemberData } : Ca
     const [linkedin, setLinkedin] = useState(member_data?.linkedin || BASE_LINKEDIN_URL);
     const [phone, setPhone] = useState(member_data?.phone || "PHONE #");
 
-    const role_exclusions = ["board", "member"];
+    const role_exclusions = ["Board", "Member"];
 
     useEffect(() => {
         if (editable) {
