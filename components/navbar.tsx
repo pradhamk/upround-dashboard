@@ -101,7 +101,7 @@ export default async function Navbar() {
                   </NavItem>
                   {
                     is_admin &&
-                    <NavItem href="/members">
+                    <NavItem href="/admin">
                       <Gavel />
                       Admin
                     </NavItem>
