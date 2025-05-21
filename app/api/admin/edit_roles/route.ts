@@ -36,7 +36,7 @@ export async function POST(request: Request) {
                 .from('profiles')
                 .update({ club_roles: data.roles })
                 .eq('email', data.email)
-  console.log(res)
+
   if (res.error) {
     return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
   }

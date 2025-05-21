@@ -23,7 +23,6 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
 
-    console.log(data)
     switch(data.method) {
         case 'create': {
             //make sure all fields are filled out
@@ -102,7 +101,6 @@ export async function POST(request: Request) {
                             .eq('id', data.company_id);
 
             if(res.error) {
-                console.log(res.error)
                 return NextResponse.json({ error: 'Failed to delete startup. Try again later.' }, { status: 400 });
             }
 
