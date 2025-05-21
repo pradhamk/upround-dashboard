@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner"
 import "./globals.css";
 import UpRoundLogo from "@/components/upround_logo";
 import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const defaultUrl = process.env.VERCEL_PROD_URL
   ? `https://${process.env.VERCEL_PROD_URL}`
@@ -39,6 +40,7 @@ export default function RootLayout({
           <main className="flex-1">
             { children }
             <Analytics />
+            <SpeedInsights />
           </main>
           <div className="py-6 flex justify-between items-center px-10">
             <div className="flex items-center">
