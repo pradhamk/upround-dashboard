@@ -1,10 +1,10 @@
 "use client";
 
-import { convertDate, generatePreview, MemberProfile, StartupProfile } from "@/utils/utils";
+import { convertDate, DealflowStatus, generatePreview, MemberProfile, StartupProfile } from "@/utils/utils";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { ReactNode, useState } from "react";
-import { ChevronRight, CalendarDays, Handshake, LinkIcon, Mail, UserSearch, SearchCheck, Trash2 } from "lucide-react";
+import { ChevronRight, CalendarDays, Handshake, LinkIcon, Mail, UserSearch, SearchCheck, Trash2, Pencil, Check } from "lucide-react";
 import Link from "next/link";
 import { MemberShortDisplay } from "./MemberShortDisplay";
 import UpRoundLogo from "@/components/upround_logo";
@@ -12,6 +12,7 @@ import { Button } from "./ui/button";
 import DeleteDialog from "./dialogs/DeleteDialog";
 import { toast } from "sonner";
 import { useRouter } from 'next/navigation'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 type StartupCardProps = {
   startup: StartupProfile,
@@ -89,6 +90,9 @@ const SocialButton = ({ url, children }: { url: string, children: ReactNode }) =
 
 export function StartupGeniusCard({ startup, member, is_admin }: { startup: StartupProfile, member: MemberProfile | null, is_admin: boolean }) {
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [newStatus, setNewStatus] = useState(startup.status);
+
   const router = useRouter();
   
   const deleteStartup = async () => {
@@ -106,6 +110,30 @@ export function StartupGeniusCard({ startup, member, is_admin }: { startup: Star
     } else {
         const err = await res.json();
         toast(err['error']);
+    }
+  }
+
+  const editStatus = async () => {
+    if(newStatus === startup.status) {
+      setEditOpen(false);
+      return;
+    }
+
+    const res = await fetch('/api/startup_action', {
+      method: 'POST',
+      body: JSON.stringify({
+        method: 'update',
+        status: newStatus,
+        company_id: startup.id
+      })
+    })
+
+    if(res.status === 200) {
+      toast("Dealflow status modified successfully.");
+      setEditOpen(false);
+    } else {
+      const err = await res.json();
+      toast(err['error']);
     }
   }
 
@@ -130,7 +158,30 @@ export function StartupGeniusCard({ startup, member, is_admin }: { startup: Star
                 { startup.source }
             </InfoRow>
             <InfoRow icon={<Handshake size={14} />} label="Dealflow Status:">
-                {startup.status}
+                <div className="flex justify-between 2xl:justify-start items-center space-x-2">
+                  {
+                    editOpen ? 
+                    <>
+                      <Select value={newStatus} onValueChange={(val) => setNewStatus(val)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Dealflow Status"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {
+                            Object.values(DealflowStatus).map((status, i) => {
+                              return <SelectItem value={status} key={i}>{status}</SelectItem>
+                            })
+                          }
+                        </SelectContent>
+                      </Select>
+                      <Check size={14} className="cursor-pointer" onClick={editStatus}/>
+                    </> :
+                    <>
+                      <span>{newStatus}</span>
+                      <Pencil size={14} className="cursor-pointer" onClick={() => setEditOpen(true)}/>
+                    </>
+                  }
+                </div>
             </InfoRow>
             <InfoRow icon={<UpRoundLogo width={14} height={14} colorWithTheme/>} label="MVC Level:">
                 <div className="flex items-center space-x-1">

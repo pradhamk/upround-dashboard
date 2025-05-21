@@ -13,10 +13,16 @@ type DeleteReqBody = {
     company_id: string,
 }
 
+type UpdateReqBody = { // For now, only the dealflow status can be updated
+    method: 'update',
+    status: string,
+    company_id: string,
+}
+
 export async function POST(request: Request) {
     const supabase = await createClient();
 
-    let data: CreateReqBody | DeleteReqBody;
+    let data: CreateReqBody | DeleteReqBody | UpdateReqBody;
     try {
         data = await request.json();
     } catch {
@@ -105,6 +111,27 @@ export async function POST(request: Request) {
             }
 
             break;
+        };
+
+        case 'update': {
+            if(!Object.values(DealflowStatus).includes(data.status as DealflowStatus)) {
+                return NextResponse.json({ error: 'Invalid status.' }, { status: 400 });
+            }
+
+            const res = await supabase
+                            .schema('dealflow')
+                            .from('startups')
+                            .update({
+                                status: data.status
+                            })
+                            .eq('id', data.company_id);
+                            
+            if(res.error) {
+                return NextResponse.json({ error: 'Failed to update startup. Try again later.' }, { status: 400 });
+            }
+
+            break;
+
         };
 
         default: {
