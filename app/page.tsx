@@ -80,7 +80,7 @@ export default async function Home() {
               <CardContent>
                 <div className="flex flex-col space-y-4">
                   {
-                    calendarEvents.length === 0 &&
+                    calendarEvents && calendarEvents.length === 0 &&
                     <span className="opacity-50">There are no upcoming events.</span>
                   }
                   {calendarEvents.map((event, i) => (

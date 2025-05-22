@@ -6,6 +6,7 @@ import { getUserProfile } from '@/utils/supabase/utils';
 async function getUserFromCode(supabase: SupabaseClient, code: string) {
   const { data: user, error } = await supabase.auth.exchangeCodeForSession(code);
   if (error || !user) {
+    console.error(error);
     throw new Error('Failed to exchange code for session');
   }
   return user;
