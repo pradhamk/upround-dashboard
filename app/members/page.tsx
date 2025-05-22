@@ -21,6 +21,7 @@ export default async function Members() {
         "fund": members.filter((member) => member.club_roles.includes('Fund') && !board.board.includes(member)),
         "accelerator": members.filter((member) => member.club_roles.includes('Accelerator') && !board.board.includes(member)),
         "dealflow": members.filter((member) => member.club_roles.includes('Dealflow') && !board.board.includes(member)),
+        "alumni": members.filter((member) => member.club_roles.includes('Alumni') && !board.board.includes(member))
     }
     const roles = {
         ...board,

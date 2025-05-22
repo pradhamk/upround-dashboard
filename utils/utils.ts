@@ -126,6 +126,7 @@ export enum ClubRoles {
   Accelerator = "Accelerator",
   Fund = "Fund",
   Dealflow = "Dealflow",
+  Alumni = "Alumni",
   member = "Member",
   board = "Board"
 }
