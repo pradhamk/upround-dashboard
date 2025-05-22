@@ -68,6 +68,25 @@ export type WhitelistEntry = {
   is_admin: boolean
 }
 
+export type MemoType = {
+  id: string,
+  company_id: string,
+  file_url: string,
+  created_at: string,
+  memo_name: string,
+}
+
+export type EnrichedMemoType = {
+  id: string,
+  created_at: string,
+  file_url: string,
+  company_name: string,
+  company_website: string,
+  memo_name: string,
+}
+
+export type GroupedMemos = Record<string, EnrichedMemoType[]>
+
 export type InsightActionBody = {
   method: 'create' | 'edit' | 'delete',
   notes: string,
