@@ -1,6 +1,7 @@
 import CreateMemo from "@/components/CreateMemo";
 import MemoList from "@/components/MemoList";
 import { createClient } from "@/utils/supabase/server";
+import { isAdmin } from "@/utils/supabase/utils";
 import { EnrichedMemoType } from "@/utils/utils";
 
 export default async function Memos() {
@@ -26,13 +27,15 @@ export default async function Memos() {
         return acc;
     }, {});
 
+    const is_admin = await isAdmin(client);
+
     return (
         <main className="w-full flex flex-col items-center justify-center">
             <div className="w-3/4 flex justify-between mt-10">
                 <h1 className="font-bold text-3xl">Memos</h1>
                 <CreateMemo />
             </div>
-            <MemoList memos={groupedMemos}/>
+            <MemoList memos={groupedMemos} is_admin={is_admin}/>
         </main>
     )
 }

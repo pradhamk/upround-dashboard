@@ -8,10 +8,11 @@ type dialogProps = {
     setOpen: Dispatch<SetStateAction<boolean>>,
     deleteAction: () => void
     description: string,
-    title: string
+    title: string,
+    children?: React.ReactNode
 };
 
-export default function DeleteDialog({ open, setOpen, deleteAction, description, title }: dialogProps) {
+export default function DeleteDialog({ open, setOpen, deleteAction, description, title, children }: dialogProps) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent>
@@ -23,7 +24,7 @@ export default function DeleteDialog({ open, setOpen, deleteAction, description,
                         {description}
                     </DialogDescription>
                 </DialogHeader>
-
+                {children}
                 <div className="w-full flex justify-end">
                     <Button onClick={deleteAction} variant="destructive">
                         Delete
