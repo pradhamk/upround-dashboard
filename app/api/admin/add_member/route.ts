@@ -1,6 +1,31 @@
 import { createClient } from '@/utils/supabase/server';
 import { ClubRoles } from '@/utils/utils';
 import { NextResponse } from 'next/server';
+import fs from "fs/promises";
+
+async function sendInvite(email: string): Promise<boolean> {
+  const template = await fs.readFile("email_templates/invite.html");
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.RESEND_KEY}`,
+    },
+    body: JSON.stringify({
+      from: "UpRound Admin <admin@upround.vc>",
+      to: [email],
+      subject: "Welcome to UpRound!",
+      html: template.toString(),
+    }),
+  });
+
+  if(res.status === 200) {
+    return true
+  } else {
+    return false
+  }
+}
 
 type ReqBody = {
     email: string,
@@ -56,6 +81,11 @@ export async function POST(request: Request) {
           email: data.email,
           is_admin: data.is_admin
         })
+
+  const email_sent = await sendInvite(data.email);
+  if(!email_sent) {
+    return NextResponse.json({ error: 'User was added to db but invite email failed to send' }, { status: 500 });
+  }
 
   return NextResponse.json({ message: 'ok.' }, { status: 200 });
 }

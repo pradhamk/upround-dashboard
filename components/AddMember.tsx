@@ -18,6 +18,12 @@ export default function AddMember() {
     const [selectedRoles, setSelectedRoles] = useState(["Member"]);
     const router = useRouter();
 
+    const clearInputs = () => {
+        setEmail("");
+        setIsAdmin(false);
+        setSelectedRoles(["Member"]);
+    }
+
     const submit = async () => {
         const res = await fetch('/api/admin/add_member', {
             method: "POST",
@@ -29,7 +35,9 @@ export default function AddMember() {
         })
 
         if(res.status === 200) {
+            toast(`Sent invite to ${email}`)
             setDialogOpen(false);
+            clearInputs()
             router.push('/admin')
         } else {
             const err = await res.json();
