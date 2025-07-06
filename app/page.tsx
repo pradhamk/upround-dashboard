@@ -83,7 +83,7 @@ export default async function Home() {
                     calendarEvents && calendarEvents.length === 0 &&
                     <span className="opacity-50">There are no upcoming events.</span>
                   }
-                  {calendarEvents.map((event, i) => (
+                  {calendarEvents && calendarEvents.map((event, i) => (
                     <div key={i}>
                       <div className="flex justify-between items-center">
                         <h2 className="text-base font-medium text-gray-800 truncate">{event.summary}</h2>
