@@ -106,19 +106,19 @@ export default async function Home() {
               calendarEvents.map((event, i) => (
                 <div
                   key={i}
-                  className="p-4 mb-1 rounded-2xl border border-gray-200 shadow-sm bg-white hover:shadow-md transition"
+                  className="p-4 mb-2 rounded-2xl border border-gray dark:bg-transparent shadow-sm 
+                            dark:bg-gray-800 hover:shadow-md transition"
                 >
                   <div className="flex justify-between items-center">
-                    <h2 className="text-base font-semibold text-gray-900 truncate">
+                    <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100 truncate">
                       {event.summary}
                     </h2>
-                    <span className="text-sm text-gray-500 shrink-0">
+                    <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0">
                       {convertDate(event.start?.dateTime || event.start?.date)}
                     </span>
                   </div>
                 </div>
               ))}
-
             </div>
           </CardContent>
         </Card>
