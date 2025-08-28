@@ -110,10 +110,20 @@ export enum MVCLevel {
 }
 
 export type CalendarEvent = {
-  summary: string,
-  created: string,
-  location?: string,
-}
+  summary: string;
+  created: string;
+  location?: string;
+  start?: {
+    date?: string;      // all-day events
+    dateTime?: string;  // timed events
+    timeZone?: string;
+  };
+  end?: {
+    date?: string;
+    dateTime?: string;
+    timeZone?: string;
+  };
+};
 
 export enum ClubRoles {
   President = "President",
@@ -135,13 +145,15 @@ export function generatePreview(url: string): string {
   return SEARCH_ICON_LINK + encodeURI(url);
 }
 
-export function convertDate(date: string) {
-  let dateString;
+export function convertDate(date?: string) {
+  if (!date) return ""; // fallback for undefined/null
 
-  if (date.includes('T')) {
+  let dateString: Date;
+
+  if (date.includes("T")) {
     dateString = new Date(date);
   } else {
-    const [year, month, day] = date.split('-').map(Number);
+    const [year, month, day] = date.split("-").map(Number);
     dateString = new Date(year, month - 1, day);
   }
 
@@ -156,6 +168,6 @@ export const MAX_INPUT_SIZE = 40;
 export const MAX_ABOUT_SIZE = 400;
 export const BASE_LINKEDIN_URL = "https://linkedin.com/in/";
 export const SEARCH_ICON_LINK = "https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=";
-export const CALENDAR = 'https://calendar.google.com/calendar/embed?src=c_6c061cb479b2083c2c2001fa4d889282e7a25aad50037f2c6ccac7b785a62772%40group.calendar.google.com&ctz=America%2FLos_Angeles';
-export const CALENDAR_ID = 'c_6c061cb479b2083c2c2001fa4d889282e7a25aad50037f2c6ccac7b785a62772@group.calendar.google.com';
+export const CALENDAR = 'https://calendar.google.com/calendar/embed?src=c_35e113fba882d8c46c1779a11e1d14966add59a05b46c0aa4a562cee5a89e2c7%40group.calendar.google.com&ctz=America%2FNew_York';
+export const CALENDAR_ID = 'c_35e113fba882d8c46c1779a11e1d14966add59a05b46c0aa4a562cee5a89e2c7@group.calendar.google.com';
 export const ADMIN_EMAIL = 'admin@upround.vc';
