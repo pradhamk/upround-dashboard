@@ -1,7 +1,6 @@
 import { google } from "googleapis";
 import ServerErrorDialog from "@/components/dialogs/ErrorDialog";
 import UserEditDialog from "@/components/dialogs/UserEditDialog";
-import FundChart from "@/components/FundChart";
 import StartupCard from "@/components/StartupCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/utils/supabase/server";
@@ -9,8 +8,7 @@ import { CALENDAR, CALENDAR_ID, CalendarEvent, convertDate, MemberProfile } from
 import Link from "next/link";
 
 const NUM_RECENT_STARTUPS = 4;
-const NUM_UPCOMING_EVENTS = 3;
-const FUND_UPDATE_DATE = "2025-05-20";
+const NUM_UPCOMING_EVENTS = 4;
 
 export default async function Home() {
   const client = await createClient();
@@ -69,20 +67,7 @@ export default async function Home() {
         <h1 className="text-secondary"> {user?.user_metadata.name}</h1>
       </div>
       <div className="w-full flex items-center justify-center mt-10 space-y-5 lg:space-x-5 px-10 lg:flex-row flex-col">
-        <Card className="w-2/3 lg:w-1/3">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex sm:items-center justify-between flex-col sm:flex-row">
-              <span className="font-bold text-xl">Fund</span>
-              <span className="text-sm opacity-75">
-                Last updated: {convertDate(FUND_UPDATE_DATE)}
-              </span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center justify-center">
-            <FundChart />
-          </CardContent>
-        </Card>
-        <Card className="w-2/3 lg:w-1/3">
+        <Card className="w-full lg:w-1/2">
           <CardHeader className="pb-2">
             <CardTitle className="flex justify-between items-center">
               <span className="font-bold text-xl">Upcoming Events</span>
@@ -122,7 +107,7 @@ export default async function Home() {
             </div>
           </CardContent>
         </Card>
-        <Card className="w-2/3 lg:w-1/3">
+        <Card className="w-full lg:w-1/2">
           <CardHeader className="pb-2">
             <CardTitle className="flex justify-between">
               <span className="font-bold text-xl">Recent Startups</span>

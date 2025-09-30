@@ -26,7 +26,7 @@ export default function StartupCard({ startup, member, can_delete = false, delet
     <Link href={`/startup_profile?id=${startup.id}`}>
       <Card className="w-full rounded-2xl flex relative cursor-pointer shadow">
         <CardContent className="flex items-center w-full gap-4 p-4">
-          <div>
+          <div className="">
             <Avatar className="size-14">
               <AvatarImage src={generatePreview(startup.website)} />
               <AvatarFallback>{startup.name} Logo</AvatarFallback>

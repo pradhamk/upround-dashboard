@@ -16,6 +16,38 @@ type MemberInsightProps = {
     onEditClick: (mode: 'edit' | 'create' | 'delete', id?: string) => void
 }
 
+function isValidUrl(url: string) {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function linkNotes(text: string | undefined) {
+  if (!text) return null;
+
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+  return text.split(urlRegex).map((part, index) => {
+    if (urlRegex.test(part) && isValidUrl(part)) {
+      return (
+        <a
+          key={index}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 underline font-medium hover:text-blue-800"
+        >
+          {part}
+        </a>
+      );
+    }
+    return <span key={index}>{part}</span>;
+  });
+}
+
 export default function MemberInsightsDisplay({ user, company_id }: { user: User | null, company_id: string }) {
     const client = createClient();
     const [insights, setInsights] = useState<EnrichedAnalystInsight[] | null>();
@@ -132,7 +164,7 @@ export function MemberInsight({ insight, editable, onEditClick }: MemberInsightP
                 </div>
             </CardHeader>
             <CardContent>
-                {insight.notes}
+                {linkNotes(insight.notes)}
             </CardContent>
             {
                 editable &&
