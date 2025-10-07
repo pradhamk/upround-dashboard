@@ -20,6 +20,7 @@ async function sendInvite(email: string): Promise<boolean> {
     }),
   });
 
+  console.log(await res.text());
   if(res.status === 200) {
     return true
   } else {

@@ -4,7 +4,7 @@ import UserEditDialog from "@/components/dialogs/UserEditDialog";
 import StartupCard from "@/components/StartupCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/utils/supabase/server";
-import { CALENDAR, CALENDAR_ID, CalendarEvent, convertDate, MemberProfile } from "@/utils/utils";
+import { CALENDAR_IDS, CalendarEvent, convertDate, MemberProfile } from "@/utils/utils";
 import Link from "next/link";
 
 const NUM_RECENT_STARTUPS = 4;
@@ -46,16 +46,21 @@ export default async function Home() {
 
     const calendar = google.calendar({ version: "v3", auth });
     const now = new Date().toISOString();
+    let items: CalendarEvent[] = [];
+    for(const CALENDAR_ID of CALENDAR_IDS) {
+      const res = await calendar.events.list({
+        calendarId: CALENDAR_ID,
+        timeMin: now,
+        maxResults: NUM_UPCOMING_EVENTS,
+        singleEvents: true,
+        orderBy: "startTime",
+      });
+      if(res.data.items) {
+        items.push(...(res.data.items as CalendarEvent[]));
+      }
+    }
 
-    const res = await calendar.events.list({
-      calendarId: CALENDAR_ID,
-      timeMin: now,
-      maxResults: NUM_UPCOMING_EVENTS,
-      singleEvents: true,
-      orderBy: "startTime",
-    });
-
-    return (res.data.items || []) as CalendarEvent[];
+    return items;
   };
 
   const calendarEvents = await fetchEvents();
@@ -71,13 +76,6 @@ export default async function Home() {
           <CardHeader className="pb-2">
             <CardTitle className="flex justify-between items-center">
               <span className="font-bold text-xl">Upcoming Events</span>
-              <Link
-                href={CALENDAR}
-                target="_blank"
-                className="text-sm text-gray-500 hover:underline"
-              >
-                View all
-              </Link>
             </CardTitle>
           </CardHeader>
           <CardContent>

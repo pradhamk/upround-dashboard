@@ -168,6 +168,7 @@ export const MAX_INPUT_SIZE = 40;
 export const MAX_ABOUT_SIZE = 400;
 export const BASE_LINKEDIN_URL = "https://linkedin.com/in/";
 export const SEARCH_ICON_LINK = "https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=";
-export const CALENDAR = 'https://calendar.google.com/calendar/embed?src=c_35e113fba882d8c46c1779a11e1d14966add59a05b46c0aa4a562cee5a89e2c7%40group.calendar.google.com&ctz=America%2FNew_York';
-export const CALENDAR_ID = 'c_35e113fba882d8c46c1779a11e1d14966add59a05b46c0aa4a562cee5a89e2c7@group.calendar.google.com';
+export const CALENDAR_IDS = [
+  'c_35e113fba882d8c46c1779a11e1d14966add59a05b46c0aa4a562cee5a89e2c7@group.calendar.google.com'
+]
 export const ADMIN_EMAIL = 'admin@upround.vc';

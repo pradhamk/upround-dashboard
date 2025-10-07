@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetFooter, SheetTitle, SheetTrigger } from "./ui
 import { Building2, Calendar1, Gavel, Icon, LucideIcon, Menu, NotepadText, Users } from "lucide-react";
 import React from "react";
 import { isAdmin } from "@/utils/supabase/utils";
-import { CALENDAR } from "@/utils/utils";
+import { CALENDAR_IDS } from "@/utils/utils";
 
 type NavItemProps = {
   href: string,
@@ -48,7 +48,7 @@ export default async function Navbar() {
               <Link href="/memos" className="hover:text-[#12AE8A] hover:underline">
                 <p>Memos</p>
               </Link>
-              <Link href={CALENDAR} target="_blank" className="hover:text-[#12AE8A] hover:underline">
+              <Link href={CALENDAR_IDS[0]} target="_blank" className="hover:text-[#12AE8A] hover:underline">
                 <p>Calendar</p>
               </Link>
               <Link href="/members" className="hover:text-[#12AE8A] hover:underline">
@@ -91,7 +91,7 @@ export default async function Navbar() {
                     <NotepadText />
                     Memos
                   </NavItem>
-                  <NavItem href={CALENDAR}>
+                  <NavItem href={CALENDAR_IDS[0]}>
                     <Calendar1 />
                     Calendar
                   </NavItem>
