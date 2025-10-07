@@ -1,11 +1,9 @@
 import { createClient } from '@/utils/supabase/server';
 import { ClubRoles } from '@/utils/utils';
 import { NextResponse } from 'next/server';
-import fs from "fs/promises";
+import template from "@/email_templates/invite.html?raw";
 
 async function sendInvite(email: string): Promise<boolean> {
-  const template = await fs.readFile("email_templates/invite.html");
-
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -16,11 +14,10 @@ async function sendInvite(email: string): Promise<boolean> {
       from: "UpRound Admin <admin@upround.vc>",
       to: [email],
       subject: "Welcome to UpRound!",
-      html: template.toString(),
+      html: template,
     }),
   });
 
-  console.log(await res.text());
   if(res.status === 200) {
     return true
   } else {
